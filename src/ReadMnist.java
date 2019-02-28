@@ -12,51 +12,115 @@ public class ReadMnist {
 
     public List<Image> getImages() throws Exception
     {
+        // STEP 1: build images from TRAINING_IMAGE_FILE
+        List<Image> images = getImagesFromImageFile(TRAINING_IMAGE_FILE, EXPECTED_TRAINING_COUNT);
+
+        // STEP 2: iterate through TRAINING_LABEL_FILE and add the labels to images
+        setActualDigitsInImagesFromLabelFile(images, TRAINING_LABEL_FILE, EXPECTED_TRAINING_COUNT);
+
+        return images;
+    }
+
+    private List<Image> getImagesFromImageFile(String imageFilePath, int expectedCount) throws Exception
+    {
         List<Image> images = new ArrayList<>();
 
-        FileInputStream imageStream = new FileInputStream(TRAINING_IMAGE_FILE);
-        // 1. ignore first 4 bytes
+        FileInputStream imageStream = new FileInputStream(imageFilePath);
+        // ignore first 4 bytes (magic number)
         byte[] imageStreamBuffer = new byte[4];
         imageStream.read(imageStreamBuffer);
 
-        // 2. next 4 bytes are the number of images
+        // next 4 bytes are the number of images
         imageStream.read(imageStreamBuffer);
         ByteBuffer wrapped = ByteBuffer.wrap(imageStreamBuffer);
         int actualSize = wrapped.getInt();
-        if (actualSize != EXPECTED_TRAINING_COUNT) {
+        if (actualSize != expectedCount) {
             throw new Exception("actual Size incorrect: " + Integer.toString(actualSize));
         }
 
-        // now we parse through the rest. Each image is 792 bytes.
-        imageStreamBuffer = new byte[792];
+        // next 4 bytes are rows
+        imageStream.read(imageStreamBuffer);
+        wrapped = ByteBuffer.wrap(imageStreamBuffer);
+        int numberOfRows = wrapped.getInt();
+        if (numberOfRows != Image.PIXEL_LENGTH) {
+            throw new Exception("numberOfRows incorrect: " + Integer.toString(numberOfRows));
+        }
+
+        // next 4 bytes are columns
+        imageStream.read(imageStreamBuffer);
+        wrapped = ByteBuffer.wrap(imageStreamBuffer);
+        int numberOfColumns = wrapped.getInt();
+        if (numberOfColumns != Image.PIXEL_LENGTH) {
+            throw new Exception("numberOfColumns incorrect: " + Integer.toString(numberOfColumns));
+        }
+
+        // now we parse through the rest. Each image is 784 bytes.
+        imageStreamBuffer = new byte[784];
 
         while((imageStream.read(imageStreamBuffer)) != -1) {
             images.add(getImage(imageStreamBuffer));
+        }
+
+        imageStream.close();
+
+        if (images.size() != expectedCount) {
+            throw new Exception("images.size() = " + Integer.toString(images.size()));
         }
 
         return images;
     }
 
     /**
-     * Expect 792 bytes total
-     * first four bytes: number of rows (always 28)
-     * second four bytes: number of columns (always 28)
-     * remaining 784 bytes are the pixels
+     * This assumes that order of images matches the order of the labels in the label file
+     * @param images
+     * @param labelFilePath
+     * @param expectedCount
+     * @throws Exception
+     */
+    private void setActualDigitsInImagesFromLabelFile(List<Image> images, String labelFilePath, int expectedCount) throws Exception
+    {
+        FileInputStream labelStream = new FileInputStream(labelFilePath);
+
+        // 1. ignore first 4 bytes
+        byte[] labelStreamBuffer = new byte[4];
+        labelStream.read(labelStreamBuffer);
+
+        // 2. next 4 bytes are the number of images
+        labelStream.read(labelStreamBuffer);
+        ByteBuffer wrapped = ByteBuffer.wrap(labelStreamBuffer);
+        int actualSize = wrapped.getInt();
+        if (actualSize != expectedCount) {
+            throw new Exception("actual Size incorrect: " + Integer.toString(actualSize));
+        }
+
+        // now we parse through the rest. Each label is a single byte
+        labelStreamBuffer = new byte[expectedCount];
+        labelStream.read(labelStreamBuffer);
+        int counter = 0;
+        for (byte b : labelStreamBuffer) {
+            images.get(counter).setActualDigit(b & 0xff);
+            counter++;
+        }
+
+        // sanity check that we've reached the end of the buffer
+        if (labelStream.read() != -1) {
+            throw new Exception("labelStream longer than expected");
+        }
+        labelStream.close();
+    }
+
+    /**
+     * Expect 784 bytes total: the pixels
      * TODO: this is not memory efficient!
      * @param bytes
      */
     private Image getImage(byte[] bytes) throws Exception
     {
         // validation
-        if (bytes.length != 792) {
+        if (bytes.length != 784) {
             throw new Exception("bytes did not have expected length: " + Integer.toString(bytes.length));
         }
-
-        int byteCursor = 0;
-        byte[] rowsAndColumns = Arrays.copyOfRange(bytes, 0, 7);
-        // TODO: validate rowsAndColumns
-        byte[] pixels = Arrays.copyOfRange(bytes,8, 791);
-        return new Image(pixels);
+        return new Image(bytes);
     }
 
     // i think this makes things more confusing because we don't know the bit-size of each "decimal", so let's stick
@@ -139,6 +203,10 @@ public class ReadMnist {
 
     public static void main(String[] args) throws Exception {
         ReadMnist readMnist = new ReadMnist();
-        readMnist.getImages();
+        List<Image> images = readMnist.getImages();
+
+        for (int i = 10; i < 20; i++) {
+            System.out.println(images.get(i));
+        }
     }
 }
