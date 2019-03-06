@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class Network {
+public class NetworkWithArrays {
     // TODO: consider making this more object oriented (e.g. having Neuron and/or NeuronLayer objects, instead of
     // relying on indexes.)
 
@@ -23,7 +23,7 @@ public class Network {
 
     boolean debugging = true;
 
-    public Network(List<Integer> _sizes)
+    public NetworkWithArrays(List<Integer> _sizes)
     {
         sizes = _sizes;
         initializeBiases();
@@ -114,11 +114,11 @@ public class Network {
     public static void main(String[] args) {
         ArrayList<Integer> sizes = new ArrayList<Integer>();
         sizes.add(2); sizes.add(3); sizes.add(1);
-        Network n = new Network(sizes);
+        NetworkWithArrays n = new NetworkWithArrays(sizes);
 
         double[] input = new double[2];
-        input[0] = 1;
-        input[1] = 1;
+        input[0] = .3;
+        input[1] = .7;
         RealVector inputVector = MatrixUtils.createRealVector(input);
         RealVector outputVector = n.feedForward(inputVector);
         System.out.println("Result:");
