@@ -23,6 +23,9 @@ public class Layer {
         if (layerNum > 0 && priorLayer == null) {
             throw new ValidationException("Cannot initialize layer with num > 0 without priorLayer");
         }
+        if (nodeCount <= 0) {
+            throw new ValidationException("layer size must be < 0");
+        }
 
         Layer layer = new Layer(layerNum);
 
@@ -35,6 +38,42 @@ public class Layer {
 
     /*
     OTHER
+     */
+
+    /**
+     * First layer only
+     * @param input
+     */
+    public void initializeWithInputData(List<Double> input) throws ValidationException
+    {
+        // validate
+        if (!isInputLayer()) {
+            throw new ValidationException("layerNum must be 0 to initialize with input data");
+        }
+        if (input.size() != nodes.size()) {
+            throw new ValidationException("input size does not match layer size");
+        }
+
+        // initialize
+        for (int i = 0; i < input.size(); i++) {
+            nodes.get(i).currentValue = input.get(i);
+        }
+    }
+
+    public boolean isInputLayer()
+    {
+        return (layerNum == 0);
+    }
+
+    public void feedForward()
+    {
+        for (Node node : nodes) {
+            node.feedForward();
+        }
+    }
+
+    /*
+    TEST
      */
 
     public String toString()

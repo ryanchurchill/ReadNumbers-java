@@ -42,6 +42,34 @@ public class NetworkWithObjects {
     /*
     OTHER
      */
+
+    public void feedForward(List<Double> input) throws ValidationException
+    {
+        if (layers.isEmpty()) {
+            throw new ValidationException("cannot feed forward empty network");
+        }
+
+        // initialize neurons in first layer with input
+        getInputLayer().initializeWithInputData(input);
+
+        // call recursive method on output layer
+        getOutputLayer().feedForward();
+    }
+
+    public Layer getInputLayer()
+    {
+        return layers.get(0);
+    }
+
+    public Layer getOutputLayer()
+    {
+        return layers.get(layers.size() - 1);
+    }
+
+    /*
+    TEST
+     */
+
     public String toString()
     {
         StringBuilder sb = new StringBuilder();
@@ -51,15 +79,18 @@ public class NetworkWithObjects {
         return sb.toString();
     }
 
-    /*
-    TEST
-     */
-
     public static void main(String[] args) throws ValidationException
     {
         ArrayList<Integer> sizes = new ArrayList<>();
         sizes.add(2); sizes.add(3); sizes.add(1);
+//        sizes.add(2); sizes.add(1);
         NetworkWithObjects n = NetworkWithObjects.initializeNetworkRandom(sizes);
         System.out.println(n);
+
+        ArrayList<Double> input = new ArrayList<>();
+        input.add(.3); input.add(.7);
+        n.feedForward(input);
+        System.out.println(n);
+
     }
 }
