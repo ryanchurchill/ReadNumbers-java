@@ -1,3 +1,5 @@
+package Mnist;
+
 public class Image {
     public final static int PIXEL_LENGTH = 28;
 

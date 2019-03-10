@@ -1,4 +1,4 @@
-package NetworkObjects;
+package Network.NetworkObjects;
 
 import java.util.*;
 

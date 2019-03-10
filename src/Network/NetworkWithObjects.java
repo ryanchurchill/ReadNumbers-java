@@ -1,9 +1,10 @@
+package Network;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import Exceptions.ValidationException;
-import NetworkObjects.*;
+import Network.NetworkObjects.*;
 
 /**
  * General rule: we initialize the network from left to right.
