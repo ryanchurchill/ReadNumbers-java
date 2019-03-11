@@ -7,15 +7,21 @@ import Util.MyMatrixUtils;
 public class Node {
     public Double bias;
     public Double currentValue;
-    public List<Synapse> synapsesToPriorLayer;
+    public List<Synapse> synapsesFromPriorLayer;
 
     /*
     CONSTRUCTORS AND FACTORIES
      */
 
-    private Node()
+    public Node()
     {
-        synapsesToPriorLayer = new ArrayList<>();
+        synapsesFromPriorLayer = new ArrayList<>();
+    }
+
+    public Node(double _bias, List<Synapse> _synapsesToPriorLayer)
+    {
+        bias = _bias;
+        synapsesFromPriorLayer = _synapsesToPriorLayer;
     }
 
     public static Node initializeNodeRandom(Layer priorLayer)
@@ -28,7 +34,7 @@ public class Node {
             Random r = new Random();
             n.bias = r.nextGaussian();
             for (Node node : priorLayer.nodes) {
-                n.synapsesToPriorLayer.add(Synapse.initializeSynapseRandom(node));
+                n.synapsesFromPriorLayer.add(Synapse.initializeSynapseRandom(node));
             }
         }
 
@@ -45,11 +51,11 @@ public class Node {
      */
     public double feedForward()
     {
-        if (!synapsesToPriorLayer.isEmpty()) {
+        if (!synapsesFromPriorLayer.isEmpty()) {
             double newVal = 0;
 
             // sum weighted values from all nodes in prior layer
-            for (Synapse synapse : synapsesToPriorLayer) {
+            for (Synapse synapse : synapsesFromPriorLayer) {
                 newVal += synapse.nodeInPriorLayer.feedForward() * synapse.weight;
             }
             // add bias
@@ -71,14 +77,14 @@ public class Node {
     {
         StringBuilder sb = new StringBuilder();
 
-        if (synapsesToPriorLayer.isEmpty()) {
+        if (synapsesFromPriorLayer.isEmpty()) {
             return "Input Node value: " + currentValue;
         }
         else {
             sb.append("value: " + currentValue);
             sb.append(" bias: " + bias);
             sb.append(" synapses to prior layer: ");
-            for (Synapse synapse : synapsesToPriorLayer) {
+            for (Synapse synapse : synapsesFromPriorLayer) {
                 sb.append(synapse.toString() + ", ");
             }
         }

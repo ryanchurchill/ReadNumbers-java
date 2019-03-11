@@ -10,7 +10,7 @@ public class Synapse {
     CONSTRUCTORS AND FACTORIES
      */
 
-    private Synapse(double _weight, Node _nodeInPriorLayer)
+    public Synapse(double _weight, Node _nodeInPriorLayer)
     {
         weight = _weight;
         nodeInPriorLayer = _nodeInPriorLayer;

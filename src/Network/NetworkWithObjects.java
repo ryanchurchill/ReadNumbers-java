@@ -23,6 +23,8 @@ public class NetworkWithObjects {
         layers = new ArrayList<>();
     }
 
+    private NetworkWithObjects(List<Layer> _layers) { layers = _layers; }
+
     /**
      * Initializes Neural Network with random gaussian distribution of weights and biases
      * @param sizes ordered list of size of each layer
@@ -38,6 +40,33 @@ public class NetworkWithObjects {
         }
 
         return network;
+    }
+
+    /**
+     *
+     * @param sizes number of neurons in each layer
+     * @param biases biases[0] is the list of biases for layer 1 (second layer)
+     * @param weights weights[0][0] is the weights from all neurons in layer 0 to the first neuron in layer 1
+     * @return
+     */
+    public static NetworkWithObjects initializeFromData(
+            List<Integer> sizes, List<List<Double>> biases, List<List<List<Double>>> weights) throws ValidationException
+    {
+        // TODO: more validations
+
+        ArrayList<Layer> layers = new ArrayList<>();
+        Layer inputLayer = Layer.initializeInputLayer(sizes.get(0));
+        layers.add(inputLayer);
+        Layer priorLayer = inputLayer;
+
+        for (int layerIndex = 1; layerIndex < sizes.size(); layerIndex++) {
+            Layer nextLayer = Layer.initializeLayerFromData(
+                    layerIndex, priorLayer, biases.get(layerIndex - 1), weights.get(layerIndex - 1));
+            layers.add(nextLayer);
+            priorLayer = nextLayer;
+        }
+
+        return new NetworkWithObjects(layers);
     }
 
     /*
@@ -65,6 +94,11 @@ public class NetworkWithObjects {
     public Layer getOutputLayer()
     {
         return layers.get(layers.size() - 1);
+    }
+
+    public int getLayerCount()
+    {
+        return layers.size();
     }
 
     /*
