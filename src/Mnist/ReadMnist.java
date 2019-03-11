@@ -11,18 +11,28 @@ public class ReadMnist {
     static final String TRAINING_IMAGE_FILE = "E:\\dev\\ai-az\\ReadNumbers-Java\\data\\train-images-idx3-ubyte";
     static final int EXPECTED_TRAINING_COUNT = 60000;
 
-    public List<Image> getImages() throws Exception
+    public static List<Image> getTrainingImages() throws Exception
+    {
+        return getImages(TRAINING_IMAGE_FILE, TRAINING_LABEL_FILE, EXPECTED_TRAINING_COUNT);
+    }
+
+//    public List<Image> getTestImages() throws Exception
+//    {
+//        return getImages(...);
+//    }
+
+    private static List<Image> getImages(String imageFilePath, String labelFilePath, int expectedCount) throws Exception
     {
         // STEP 1: build images from TRAINING_IMAGE_FILE
-        List<Image> images = getImagesFromImageFile(TRAINING_IMAGE_FILE, EXPECTED_TRAINING_COUNT);
+        List<Image> images = getImagesFromImageFile(imageFilePath, expectedCount);
 
         // STEP 2: iterate through TRAINING_LABEL_FILE and add the labels to images
-        setActualDigitsInImagesFromLabelFile(images, TRAINING_LABEL_FILE, EXPECTED_TRAINING_COUNT);
+        setActualDigitsInImagesFromLabelFile(images, labelFilePath, expectedCount);
 
         return images;
     }
 
-    private List<Image> getImagesFromImageFile(String imageFilePath, int expectedCount) throws Exception
+    private static List<Image> getImagesFromImageFile(String imageFilePath, int expectedCount) throws Exception
     {
         List<Image> images = new ArrayList<>();
 
@@ -78,7 +88,7 @@ public class ReadMnist {
      * @param expectedCount
      * @throws Exception
      */
-    private void setActualDigitsInImagesFromLabelFile(List<Image> images, String labelFilePath, int expectedCount) throws Exception
+    private static void setActualDigitsInImagesFromLabelFile(List<Image> images, String labelFilePath, int expectedCount) throws Exception
     {
         FileInputStream labelStream = new FileInputStream(labelFilePath);
 
@@ -115,7 +125,7 @@ public class ReadMnist {
      * TODO: this is not memory efficient!
      * @param bytes
      */
-    private Image getImage(byte[] bytes) throws Exception
+    private static Image getImage(byte[] bytes) throws Exception
     {
         // validation
         if (bytes.length != 784) {
@@ -126,7 +136,7 @@ public class ReadMnist {
 
     // i think this makes things more confusing because we don't know the bit-size of each "decimal", so let's stick
     // with hex
-    public void printLabelsAsDecimal()
+    public static void printLabelsAsDecimal()
     {
         String fileName = TRAINING_LABEL_FILE;
 
@@ -156,7 +166,7 @@ public class ReadMnist {
         }
     }
 
-    public void printLabelsAsHex()
+    public static void printLabelsAsHex()
     {
         String fileName = TRAINING_LABEL_FILE;
 
@@ -203,8 +213,8 @@ public class ReadMnist {
     }
 
     public static void main(String[] args) throws Exception {
-        ReadMnist readMnist = new ReadMnist();
-        List<Image> images = readMnist.getImages();
+//        ReadMnist readMnist = new ReadMnist();
+        List<Image> images = ReadMnist.getTrainingImages();
 
         for (int i = 10; i < 20; i++) {
             System.out.println(images.get(i));
