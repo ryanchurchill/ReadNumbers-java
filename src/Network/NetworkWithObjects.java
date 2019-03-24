@@ -96,6 +96,16 @@ public class NetworkWithObjects {
         return layers.get(layers.size() - 1);
     }
 
+    public double[] getOutputValues()
+    {
+        Layer outputLayer = getOutputLayer();
+        double[] ret = new double[outputLayer.nodeCount()];
+        for (int i = 0; i < outputLayer.nodeCount(); i++) {
+            ret[i] = outputLayer.nodes.get(i).currentValue;
+        }
+        return ret;
+    }
+
     public int getLayerCount()
     {
         return layers.size();

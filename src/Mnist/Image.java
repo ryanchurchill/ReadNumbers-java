@@ -1,10 +1,17 @@
 package Mnist;
 
+import java.util.*;
+
 public class Image {
     public final static int PIXEL_LENGTH = 28;
 
     // X by Y (column by row)
     int[][] pixels = new int[PIXEL_LENGTH][PIXEL_LENGTH];
+
+    public int getActualDigit() {
+        return actualDigit;
+    }
+
     int actualDigit = -1; // 0-9 AKA label
 
     // Pixels are organized row-wise. Pixel values are 0 to 255. 0 means background (white), 255 means foreground (black).
@@ -70,5 +77,16 @@ public class Image {
             }
         }
         return sb.toString();
+    }
+
+    public List<Double> getPixelsForNetwork()
+    {
+        List<Double> ret = new ArrayList<>();
+        for (int y = 0; y < PIXEL_LENGTH; y++) {
+            for (int x=0; x < PIXEL_LENGTH; x++) {
+                ret.add((double)pixels[x][y]);
+            }
+        }
+        return ret;
     }
 }
