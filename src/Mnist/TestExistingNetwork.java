@@ -1,6 +1,5 @@
 package Mnist;
 
-import Network.NetworkObjects.*;
 import Network.NetworkUtils.*;
 import Network.*;
 
@@ -13,41 +12,31 @@ public class TestExistingNetwork {
     public static void main(String[] args) throws Exception {
         List<Image> trainingImages = ReadMnist.getTrainingImages();
         LoadNetworkFromFileNumpy loader = new LoadNetworkFromFileNumpy(networkFilePath);
-        NetworkWithObjects n = loader.load();
+        NetworkWithObjects oldNetwork = loader.load();
 
+        List<Integer> sizes = new ArrayList<>();
+        sizes.add(784); sizes.add(30); sizes.add(10);
+        NetworkWithObjects newNetwork = NetworkWithObjects.initializeNetworkRandom(sizes);
+
+        System.out.println("Old Network");
         for (int i = 0; i < 20; i++) {
-            testImage(n, trainingImages.get(i));
+            testImage(oldNetwork, trainingImages.get(i+30));
         }
+//        System.out.println("New Network");
+//        for (int i = 0; i < 20; i++) {
+//            testImage(newNetwork, trainingImages.get(i));
+//        }
     }
 
     public static void testImage(NetworkWithObjects n, Image i) throws Exception
     {
-        feedImageToNetwork(n, i);
-        System.out.println("Actual value: " + i.getActualDigit());
-        System.out.println("Network value: " + determineResultFromNetwork(n));
-    }
-
-    public static void feedImageToNetwork(NetworkWithObjects n, Image i) throws Exception
-    {
-        n.feedForward(i.getPixelsForNetwork());
-    }
-
-    /**
-     * Returns the index of the output layer with the value closest to 1
-     * @param n
-     * @return
-     */
-    public static int determineResultFromNetwork(NetworkWithObjects n)
-    {
-        double closestValue = Double.MIN_VALUE;
-        int closestValueIndex = -1;
-        double[] outputValues = n.getOutputValues();
-        for (int i = 0; i < outputValues.length; i++) {
-            if (Math.abs(outputValues[i] - 1) < Math.abs(closestValue - 1)) {
-                closestValue = outputValues[i];
-                closestValueIndex = i;
-            }
+        ImageToNetwork.feedImageToNetwork(n, i);
+        int actualValue = i.getActualDigit();
+        int networkValue = ImageToNetwork.determineResultFromNetwork(n);
+        System.out.println("Actual value: " + actualValue);
+        System.out.println("Network value: " + networkValue);
+        if (actualValue != networkValue) {
+            System.out.println(i);
         }
-        return closestValueIndex;
     }
 }
