@@ -5,6 +5,7 @@ import java.util.List;
 
 import Exceptions.ValidationException;
 import Network.NetworkObjects.*;
+import Util.MyMathUtils;
 
 /**
  * General rule: we initialize the network from left to right.
@@ -60,7 +61,7 @@ public class NetworkWithObjects {
         Layer priorLayer = inputLayer;
 
         for (int layerIndex = 1; layerIndex < sizes.size(); layerIndex++) {
-            Layer nextLayer = Layer.initializeLayerFromData(
+            Layer nextLayer = Layer.buildLayerFromData(
                     layerIndex, priorLayer, biases.get(layerIndex - 1), weights.get(layerIndex - 1));
             layers.add(nextLayer);
             priorLayer = nextLayer;
@@ -110,6 +111,42 @@ public class NetworkWithObjects {
     {
         return layers.size();
     }
+
+    /**
+     * Update the network so every node has a NodeLearningProperties object with its error
+     * @param input
+     * @param expectedOutput
+     */
+    public void calculateErrors(List<Double> input, List<Double> expectedOutput) throws ValidationException
+    {
+        // feed the input through the network
+        feedForward(input);
+
+        // calculate the error at the output layer
+        Layer outputLayer = getOutputLayer();
+        int nodeIndex = 0;
+        for (Node n : outputLayer.nodes) {
+            n.setErrorForOutputNode(expectedOutput.get(nodeIndex));
+            nodeIndex++;
+        }
+
+        // propogate error back to the remaining layers
+        for (int layerIndex = getLayerCount() - 2; layerIndex >= 0; layerIndex--) {
+            Layer currentLayer = layers.get(layerIndex);
+            for (Node n : currentLayer.nodes) {
+                n.setErrorForNonOutputNode();
+            }
+        }
+    }
+
+    /**
+     * synapsesFromPriorLayer are set as we build up the network. Once that's done, this method can be called
+     * to populate synapsesToNextLayer
+     */
+//    public void setSynapsesToNextLayer()
+//    {
+//        Layer outputLayer = getOutputLayer();
+//    }
 
     /*
     TEST

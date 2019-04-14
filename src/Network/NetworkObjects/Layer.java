@@ -58,7 +58,7 @@ public class Layer {
      * @return
      * @throws ValidationException
      */
-    public static Layer initializeLayerFromData(
+    public static Layer buildLayerFromData(
             int layerNum,
             Layer priorLayer,
             List<Double> biasesForThisLayer,
@@ -84,11 +84,12 @@ public class Layer {
         {
             double bias = biasesForThisLayer.get(nodeIndexThisLayer);
             List<Synapse> synapsesFromPriorLayer = new ArrayList<>();
+            Node n = new Node(bias);
             for (int nodeIndexPriorLayer = 0; nodeIndexPriorLayer < priorLayer.nodeCount(); nodeIndexPriorLayer++) {
                 double weight = weightsFromPriorLayer.get(nodeIndexThisLayer).get(nodeIndexPriorLayer);
-                synapsesFromPriorLayer.add(new Synapse(weight, priorLayer.nodes.get(nodeIndexPriorLayer)));
+                new Synapse(weight, priorLayer.nodes.get(nodeIndexPriorLayer), n);
             }
-            layer.nodes.add(new Node(bias, synapsesFromPriorLayer));
+            layer.nodes.add(n);
 
         }
 
@@ -100,7 +101,7 @@ public class Layer {
      */
 
     /**
-     * First layer only
+     * First layer only - start of feeding data through the network
      * @param input
      */
     public void initializeWithInputData(List<Double> input) throws ValidationException
@@ -124,7 +125,7 @@ public class Layer {
         return (layerNum == 0);
     }
 
-    public void feedForward()
+    public void feedForward() throws ValidationException
     {
         for (Node node : nodes) {
             node.feedForward();

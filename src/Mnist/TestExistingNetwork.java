@@ -36,7 +36,9 @@ public class TestExistingNetwork {
         System.out.println("Actual value: " + actualValue);
         System.out.println("Network value: " + networkValue);
         if (actualValue != networkValue) {
+            System.out.println("Mismatch!");
             System.out.println(i);
+            System.out.println("End mismatch");
         }
     }
 }

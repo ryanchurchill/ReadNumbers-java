@@ -1,6 +1,6 @@
 package Network;
 
-import Util.MyMatrixUtils;
+import Util.MyMathUtils;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * Deprecated
+ */
 public class NetworkWithArrays {
     // TODO: consider making this more object oriented (e.g. having Neuron and/or NeuronLayer objects, instead of
     // relying on indexes.)
@@ -34,9 +37,9 @@ public class NetworkWithArrays {
 
         if (debugging) {
             System.out.println("Biases:");
-            MyMatrixUtils.printRealMatrices(biases);
+            MyMathUtils.printRealMatrices(biases);
             System.out.println("Weights:");
-            MyMatrixUtils.printRealMatrices(weights);
+            MyMathUtils.printRealMatrices(weights);
         }
     }
 
@@ -100,7 +103,7 @@ public class NetworkWithArrays {
             for (int neuronIndex = 0; neuronIndex < outputSize; neuronIndex ++) {
                 double val = input.dotProduct(weightsBetweenLayers.getRowVector(neuronIndex));
                 val += biasesAtNextLayer.getEntry(neuronIndex, 0);
-                val = MyMatrixUtils.sigmoid(val);
+                val = MyMathUtils.sigmoid(val);
                 outputArr[neuronIndex] = val;
             }
 

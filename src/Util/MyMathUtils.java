@@ -4,7 +4,7 @@ import org.apache.commons.math3.linear.RealMatrix;
 
 import java.util.List;
 
-public class MyMatrixUtils {
+public class MyMathUtils {
     public static void printRealMatrix(RealMatrix m)
     {
         for (int i = 0; i < m.getRowDimension(); i++) {
@@ -38,6 +38,11 @@ public class MyMatrixUtils {
     public static double sigmoid(double x)
     {
         return 1 / (1 + Math.exp(-x));
+    }
+
+    public static double sigmoidPrime(double x)
+    {
+        return sigmoid(x) * (1 - sigmoid(x));
     }
 
 }

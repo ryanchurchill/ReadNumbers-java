@@ -2,12 +2,21 @@ package Network.NetworkObjects;
 
 import java.util.*;
 
-import Util.MyMatrixUtils;
+import Exceptions.ValidationException;
+import Util.MyMathUtils;
 
 public class Node {
-    public Double bias;
-    public Double currentValue;
+    // structural / permanent
     public List<Synapse> synapsesFromPriorLayer;
+    public List<Synapse> synapsesToNextLayer;
+
+    // changes slowly, and only when learning
+    public Double bias;
+
+    // changes with each data point
+    public Double currentValue;
+    public double error;
+    public double weightedInput; // AKA Z
 
     /*
     CONSTRUCTORS AND FACTORIES
@@ -16,12 +25,13 @@ public class Node {
     public Node()
     {
         synapsesFromPriorLayer = new ArrayList<>();
+        synapsesToNextLayer = new ArrayList<>();
     }
 
-    public Node(double _bias, List<Synapse> _synapsesToPriorLayer)
+    public Node(double _bias)
     {
+        this();
         bias = _bias;
-        synapsesFromPriorLayer = _synapsesToPriorLayer;
     }
 
     public static Node initializeNodeRandom(Layer priorLayer)
@@ -33,8 +43,8 @@ public class Node {
         if (priorLayer != null) {
             Random r = new Random();
             n.bias = r.nextGaussian();
-            for (Node node : priorLayer.nodes) {
-                n.synapsesFromPriorLayer.add(Synapse.initializeSynapseRandom(node));
+            for (Node priorLayerNode : priorLayer.nodes) {
+                Synapse.initializeSynapseRandom(priorLayerNode, n);
             }
         }
 
@@ -49,7 +59,7 @@ public class Node {
      * sets currentValue and returns it based on the nodes in the prior layer
      * @return
      */
-    public double feedForward()
+    public double feedForward() throws ValidationException
     {
         if (!synapsesFromPriorLayer.isEmpty()) {
             double newVal = 0;
@@ -60,13 +70,42 @@ public class Node {
             }
             // add bias
             newVal += bias;
+
+            // store Z since we'll need it later
+            weightedInput = newVal;
+
             // signmoid
-            newVal = MyMatrixUtils.sigmoid(newVal);
+            newVal = MyMathUtils.sigmoid(newVal);
 
             currentValue = newVal;
         }
 
         return currentValue;
+    }
+
+    public void setErrorForOutputNode(double expectedValue) throws ValidationException
+    {
+        if (!synapsesToNextLayer.isEmpty()) {
+            throw new ValidationException("method must be called on output node!");
+        }
+        // for output layer, use BP1: (a - y) * (sigmoidPrime(z))
+        error = (currentValue - expectedValue)
+                * MyMathUtils.sigmoidPrime(weightedInput);
+    }
+
+    public void setErrorForNonOutputNode() throws ValidationException
+    {
+        if (synapsesToNextLayer.isEmpty()) {
+            throw new ValidationException("method must not be called on output node!");
+        }
+
+        // for other layers, use BP2 to feed error back from next layer
+        double newError = 0;
+
+        // sum weighted errors from all nodes in next layer
+        for (Synapse synapse : synapsesToNextLayer) {
+            newError += synapse.nodeInPriorLayer.feedForward() * synapse.weight;
+        }
     }
 
     /*
@@ -78,7 +117,7 @@ public class Node {
         StringBuilder sb = new StringBuilder();
 
         if (synapsesFromPriorLayer.isEmpty()) {
-            return "Input Node value: " + currentValue;
+            sb.append("Input Node value: " + currentValue);
         }
         else {
             sb.append("value: " + currentValue);
@@ -87,6 +126,10 @@ public class Node {
             for (Synapse synapse : synapsesFromPriorLayer) {
                 sb.append(synapse.toString() + ", ");
             }
+        }
+        sb.append(" synapses to next layer: ");
+        for (Synapse synapse : synapsesToNextLayer) {
+            sb.append(synapse.toString() + ", ");
         }
         return sb.substring(0, sb.length() - 2);
     }
