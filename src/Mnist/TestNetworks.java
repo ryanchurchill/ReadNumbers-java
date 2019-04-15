@@ -7,7 +7,7 @@ import com.google.common.collect.Lists;
 
 import java.util.*;
 
-public class TestExistingNetwork {
+public class TestNetworks {
 
     static final String digitNetworkPath = "E:\\dev\\ai-az\\ReadNumbers-Java\\data\\wb_ryan_python.txt";
     static final String simpleNetworkPath = "E:\\dev\\ai-az\\ReadNumbers-Java\\data\\sandbox_ryan_python.txt";
@@ -15,7 +15,74 @@ public class TestExistingNetwork {
 
     public static void main(String[] args) throws Exception
     {
-        testLightlyTrainedNetwork();
+        performanceTestingObjects();
+        performanceTestingArrays();
+    }
+
+    public static void performanceTestingObjects() throws Exception
+    {
+        System.out.println("Testing NetworkWithObjects...");
+
+        ArrayList<Integer> sizes = new ArrayList<>();
+        sizes.add(784); sizes.add(30); sizes.add(10);
+        NetworkWithObjects n = NetworkWithObjects.initializeNetworkRandom(sizes);
+
+        List<Image> allTrainingImages = ReadMnist.getTrainingImages();
+
+//        for (int i = 0; i < 10; i++) {
+//            Image img = allTrainingImages.get(i);
+//            long duration = timeSingleFeedForward(n, img);
+//            System.out.println(duration);
+//        }
+
+        int count = 1000;
+        long duration = timeBatchFeedForwardObjects(n, allTrainingImages.subList(0, count));
+        double rate = ((double) count / (double)duration) * 1000.0;
+        System.out.println("Avg rate: " + rate + " / sec");
+    }
+
+    public static void performanceTestingArrays() throws Exception
+    {
+        System.out.println("Testing network with arrays...");
+
+        ArrayList<Integer> sizes = new ArrayList<>();
+        sizes.add(784); sizes.add(30); sizes.add(10);
+        NetworkWithArrays n = new NetworkWithArrays(sizes);
+
+        List<Image> allTrainingImages = ReadMnist.getTrainingImages();
+
+        int count = 1000;
+        long duration = timeBatchFeedForwardArrays(n, allTrainingImages.subList(0, count));
+        double rate = ((double) count / (double)duration) * 1000.0;
+        System.out.println("Avg rate: " + rate + " / sec");
+    }
+
+    public static long timeSingleFeedForward(NetworkWithObjects n, Image i) throws Exception
+    {
+        long startTime = System.currentTimeMillis();
+        ImageToNetwork.feedImageToNetwork(n, i);
+        long endTime = System.currentTimeMillis();
+        return (endTime - startTime);
+    }
+
+    public static long timeBatchFeedForwardObjects(NetworkWithObjects n, List<Image> images) throws Exception
+    {
+        long startTime = System.currentTimeMillis();
+        for (Image img : images) {
+            ImageToNetwork.feedImageToNetwork(n, img);
+        }
+        long endTime = System.currentTimeMillis();
+        return (endTime - startTime);
+    }
+
+    public static long timeBatchFeedForwardArrays(NetworkWithArrays n, List<Image> images) throws Exception
+    {
+        long startTime = System.currentTimeMillis();
+        for (Image img : images) {
+            ImageToNetwork.feedImageToNetworkWithArrays(n, img);
+        }
+        long endTime = System.currentTimeMillis();
+        return (endTime - startTime);
     }
 
     public static void testLightlyTrainedNetwork() throws Exception

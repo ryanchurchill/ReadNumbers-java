@@ -1,5 +1,9 @@
 package Mnist;
 
+import org.apache.commons.math3.linear.MatrixUtils;
+import org.apache.commons.math3.linear.RealMatrix;
+import org.apache.commons.math3.linear.RealVector;
+
 import java.util.*;
 
 public class Image {
@@ -98,5 +102,17 @@ public class Image {
             }
         }
         return ret;
+    }
+
+    public RealVector getPixelsForArrayNetwork()
+    {
+        double[] ret = new double[PIXEL_LENGTH * PIXEL_LENGTH];
+        int counter = 0;
+        for (int y = 0; y < PIXEL_LENGTH; y++) {
+            for (int x=0; x < PIXEL_LENGTH; x++) {
+                ret[counter++] = (pixels[x][y]);
+            }
+        }
+        return MatrixUtils.createRealVector(ret);
     }
 }

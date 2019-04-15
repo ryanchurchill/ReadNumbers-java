@@ -2,6 +2,7 @@ package Mnist;
 
 import Exceptions.ValidationException;
 import Network.Learning.TrainingExample;
+import Network.NetworkWithArrays;
 import Network.NetworkWithObjects;
 
 import java.util.*;
@@ -10,6 +11,11 @@ public class ImageToNetwork {
     public static void feedImageToNetwork(NetworkWithObjects n, Image i) throws Exception
     {
         n.feedForward(i.getPixelsForNetwork());
+    }
+
+    public static void feedImageToNetworkWithArrays(NetworkWithArrays n, Image i) throws Exception
+    {
+        n.feedForward(i.getPixelsForArrayNetwork());
     }
 
     /**

@@ -22,7 +22,7 @@ public class TrainWithMnist {
         List<Image> allTrainingImages = ReadMnist.getTrainingImages();
         List<List<Image>> imageBatches = Lists.partition(allTrainingImages, miniBatchSize);
         // TEMP to speed things up
-        imageBatches = imageBatches.subList(0, 1000);
+//        imageBatches = imageBatches.subList(0, 1000);
 
         List<Image> testImages = allTrainingImages.subList(0, 1000);
 

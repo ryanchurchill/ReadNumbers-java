@@ -27,7 +27,7 @@ public class NetworkWithArrays {
     // matrix at index 0 is the weights from layer 0 to layer 1
     List<RealMatrix> weights;
 
-    boolean debugging = true;
+    boolean debugging = false;
 
     public NetworkWithArrays(List<Integer> _sizes)
     {
@@ -91,7 +91,7 @@ public class NetworkWithArrays {
      * @param input an (n, 1) matrix of the values going to the input layer
      * @return an (m, 1) matrix of the values coming out of the desiredOutput layer
      */
-    private RealVector feedForward(RealVector input)
+    public RealVector feedForward(RealVector input)
     {
         for (int startingLayer = 0; startingLayer < getNumLayers() - 1; startingLayer ++) {
             RealMatrix biasesAtNextLayer = biases.get(startingLayer);
