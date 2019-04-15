@@ -10,7 +10,7 @@ public class ImageToNetwork {
     {
         n.feedForward(i.getPixelsForNetwork());
         if (calcError) {
-            n.calculateErrors(i.getPixelsForNetwork(), determineExpectedOutputValuesForDigit(i.getActualDigit()));
+            n.calculateErrors(determineExpectedOutputValuesForDigit(i.getActualDigit()));
         }
     }
 

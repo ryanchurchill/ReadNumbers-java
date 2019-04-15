@@ -26,7 +26,13 @@ public class TestExistingNetwork {
         List<Double> desiredOutput = new ArrayList<>();
         desiredOutput.add(3.0);
 
-        simpleNetwork.calculateErrors(input, desiredOutput);
+        System.out.println("Initial network:");
+        System.out.println(simpleNetwork);
+
+        simpleNetwork.feedForward(input);
+        simpleNetwork.calculateErrors(desiredOutput);
+        simpleNetwork.updateWeightsAndBiases();
+        System.out.println("Network after one training example:");
         System.out.println(simpleNetwork);
     }
 

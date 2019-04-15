@@ -15,6 +15,8 @@ import Util.MyMathUtils;
 public class NetworkWithObjects {
     List<Layer> layers;
 
+    public double learningRate = 3;
+
     /*
     CONSTRUCTORS AND FACTORIES
      */
@@ -74,19 +76,6 @@ public class NetworkWithObjects {
     OTHER
      */
 
-    public void feedForward(List<Double> input) throws ValidationException
-    {
-        if (layers.isEmpty()) {
-            throw new ValidationException("cannot feed forward empty network");
-        }
-
-        // initialize neurons in first layer with input
-        getInputLayer().initializeWithInputData(input);
-
-        // call recursive method on output layer
-        getOutputLayer().feedForward();
-    }
-
     public Layer getInputLayer()
     {
         return layers.get(0);
@@ -112,21 +101,31 @@ public class NetworkWithObjects {
         return layers.size();
     }
 
+    public void feedForward(List<Double> input) throws ValidationException
+    {
+        if (layers.isEmpty()) {
+            throw new ValidationException("cannot feed forward empty network");
+        }
+
+        // initialize neurons in first layer with input
+        getInputLayer().initializeWithInputData(input);
+
+        // call recursive method on output layer
+        getOutputLayer().feedForward();
+    }
+
     /**
      * Update the network so every node has a NodeLearningProperties object with its error
-     * @param input
-     * @param expectedOutput
+     * Must be called after feedForward
+     * @param desiredOutput
      */
-    public void calculateErrors(List<Double> input, List<Double> expectedOutput) throws ValidationException
+    public void calculateErrors(List<Double> desiredOutput) throws ValidationException
     {
-        // feed the input through the network
-        feedForward(input);
-
         // calculate the error at the output layer
         Layer outputLayer = getOutputLayer();
         int nodeIndex = 0;
         for (Node n : outputLayer.nodes) {
-            n.setErrorForOutputNode(expectedOutput.get(nodeIndex));
+            n.setErrorForOutputNode(desiredOutput.get(nodeIndex));
             nodeIndex++;
         }
 
@@ -135,6 +134,28 @@ public class NetworkWithObjects {
             Layer currentLayer = layers.get(layerIndex);
             for (Node n : currentLayer.nodes) {
                 n.setErrorForNonOutputNode();
+            }
+        }
+    }
+
+    /**
+     * Must be called after feedForward and calculateErrors
+     * TODO: make the flow more cohesive and work with mini batches
+     * @throws ValidationException
+     */
+    public void updateWeightsAndBiases() throws ValidationException
+    {
+        for (Layer l : layers)
+        {
+            for (Node n : l.nodes) {
+                // nableBias == error
+                if (!(n.bias == null)) {
+                    n.bias = (n.bias - (learningRate * n.error));
+                }
+                for (Synapse s : n.synapsesToNextLayer) {
+                    double nablaWeight = s.nodeInPriorLayer.currentValue * s.nodeInNextLayer.error;
+                    s.weight = (s.weight - (learningRate * nablaWeight));
+                }
             }
         }
     }
