@@ -21,8 +21,13 @@ public class TrainWithMnist {
 
         List<Image> allTrainingImages = ReadMnist.getTrainingImages();
         List<List<Image>> imageBatches = Lists.partition(allTrainingImages, miniBatchSize);
+        // TEMP to speed things up
+        imageBatches = imageBatches.subList(0, 1000);
 
         List<Image> testImages = allTrainingImages.subList(0, 1000);
+
+        System.out.println("Epoch -1");
+        outputBatchTest(testImages);
 
         for (int epochCounter = 0; epochCounter < epochs; epochCounter++) {
             System.out.println("Starting Epoch " + epochCounter);
