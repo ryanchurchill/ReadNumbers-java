@@ -22,6 +22,7 @@ public class TestExistingNetwork {
     {
         LoadNetworkFromFileNumpy loader = new LoadNetworkFromFileNumpy(oneExamplePath);
         NetworkWithObjects n = loader.load();
+        System.out.println(n);
 
         List<Image> allTrainingImages = ReadMnist.getTrainingImages();
         List<List<Image>> imageBatches = Lists.partition(allTrainingImages, 1);
