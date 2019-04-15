@@ -107,7 +107,7 @@ public class Node {
             newError += synapse.nodeInNextLayer.error * synapse.weight;
         }
         // multiply by sigmoid prime of this node's Z
-        newError *= weightedInput;
+        newError *= MyMathUtils.sigmoidPrime(weightedInput);
 
         error = newError;
     }
@@ -121,6 +121,7 @@ public class Node {
         StringBuilder sb = new StringBuilder();
 
         sb.append("value: " + currentValue);
+        sb.append(" z : " + weightedInput);
         sb.append(" error: " + error);
         if (!synapsesFromPriorLayer.isEmpty()) {
 
