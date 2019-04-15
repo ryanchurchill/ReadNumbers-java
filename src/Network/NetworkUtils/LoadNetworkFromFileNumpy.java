@@ -7,7 +7,7 @@ import java.io.*;
 import java.util.*;
 
 /*
-This weird format is a hybrid of numpy printing and my own hacks. The idea is to generate a NN based on the output
+This weird format is a hybrid of numpy printing and my own hacks. The idea is to generate a NN based on the desiredOutput
 I'm getting from the working python program.
 
 For format example, see data/wb_ryan_python.txt
@@ -143,7 +143,7 @@ public class LoadNetworkFromFileNumpy {
 
     /**
      * expected string format: [-0.11027705 -8.24438470e-01  4.51818679e-01  4.39181097e-02]
-     * (it's based on the python default numpy output)
+     * (it's based on the python default numpy desiredOutput)
      * @param string
      * @return
      * @throws ValidationException

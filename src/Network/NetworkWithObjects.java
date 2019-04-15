@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import Exceptions.ValidationException;
+import Network.Learning.TrainingExample;
 import Network.NetworkObjects.*;
-import Util.MyMathUtils;
 
 /**
  * General rule: we initialize the network from left to right.
@@ -110,7 +110,7 @@ public class NetworkWithObjects {
         // initialize neurons in first layer with input
         getInputLayer().initializeWithInputData(input);
 
-        // call recursive method on output layer
+        // call recursive method on desiredOutput layer
         getOutputLayer().feedForward();
     }
 
@@ -121,7 +121,7 @@ public class NetworkWithObjects {
      */
     public void calculateErrors(List<Double> desiredOutput) throws ValidationException
     {
-        // calculate the error at the output layer
+        // calculate the error at the desiredOutput layer
         Layer outputLayer = getOutputLayer();
         int nodeIndex = 0;
         for (Node n : outputLayer.nodes) {
@@ -139,11 +139,11 @@ public class NetworkWithObjects {
     }
 
     /**
+     * Deprecated! Use trainWithMiniBatch
      * Must be called after feedForward and calculateErrors
-     * TODO: make the flow more cohesive and work with mini batches
      * @throws ValidationException
      */
-    public void updateWeightsAndBiases() throws ValidationException
+    public void updateWeightsAndBiasesAfterSingleTrainingExample() throws ValidationException
     {
         for (Layer l : layers)
         {
@@ -155,6 +155,66 @@ public class NetworkWithObjects {
                 for (Synapse s : n.synapsesToNextLayer) {
                     double nablaWeight = s.nodeInPriorLayer.currentValue * s.nodeInNextLayer.error;
                     s.weight = (s.weight - (learningRate * nablaWeight));
+                }
+            }
+        }
+    }
+
+    public void trainWithMiniBatch(List<TrainingExample> miniBatch) throws ValidationException
+    {
+//        resetAllNablas();
+        for (TrainingExample te : miniBatch) {
+            feedForward(te.input);
+            calculateErrors(te.desiredOutput);
+            updateAllNablas();
+        }
+
+        updateWeightsAndBiasesAfterProcessingMiniBatch(miniBatch.size());
+    }
+
+    /**
+     * We go left to right, but order we iterate doesn't matter
+     * Shouldn't need to be called!
+     */
+    private void resetAllNablas()
+    {
+        for (Layer l : layers)
+        {
+            for (Node n : l.nodes) {
+                n.biasNablaForMiniBatch = 0;
+                for (Synapse s : n.synapsesToNextLayer) {
+                    s.weightNablaForMiniBatch = 0;
+                }
+            }
+        }
+    }
+
+    /**
+     * We go left to right, but order we iterate doesn't matter
+     */
+    private void updateAllNablas()
+    {
+        for (Layer l : layers)
+        {
+            for (Node n : l.nodes) {
+                n.updateBiasNablaForMiniBatch();
+                for (Synapse s : n.synapsesToNextLayer) {
+                    s.updateWeightNablaForMiniBatch();
+                }
+            }
+        }
+    }
+
+    private void updateWeightsAndBiasesAfterProcessingMiniBatch(int miniBatchSize)
+    {
+        for (Layer l : layers)
+        {
+            for (Node n : l.nodes) {
+                if (l.layerNum > 0) {
+                    n.updateBiasFromNabla(learningRate, miniBatchSize);
+                }
+                for (Synapse s : n.synapsesToNextLayer) {
+                    s.updateWeightFromNabla(learningRate, miniBatchSize);
                 }
             }
         }

@@ -15,7 +15,7 @@ public class ImageToNetwork {
     }
 
     /**
-     * Returns the index of the output layer with the value closest to 1
+     * Returns the index of the desiredOutput layer with the value closest to 1
      * @param n
      * @return
      */

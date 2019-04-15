@@ -17,6 +17,7 @@ public class Node {
     public Double currentValue;
     public double error;
     public double weightedInput; // AKA Z
+    public double biasNablaForMiniBatch = 0;
 
     /*
     CONSTRUCTORS AND FACTORIES
@@ -86,9 +87,9 @@ public class Node {
     public void setErrorForOutputNode(double expectedValue) throws ValidationException
     {
         if (!synapsesToNextLayer.isEmpty()) {
-            throw new ValidationException("method must be called on output node!");
+            throw new ValidationException("method must be called on desiredOutput node!");
         }
-        // for output layer, use BP1: (a - y) * (sigmoidPrime(z))
+        // for desiredOutput layer, use BP1: (a - y) * (sigmoidPrime(z))
         error = (currentValue - expectedValue)
                 * MyMathUtils.sigmoidPrime(weightedInput);
     }
@@ -96,7 +97,7 @@ public class Node {
     public void setErrorForNonOutputNode() throws ValidationException
     {
         if (synapsesToNextLayer.isEmpty()) {
-            throw new ValidationException("method must not be called on output node!");
+            throw new ValidationException("method must not be called on desiredOutput node!");
         }
 
         // for other layers, use BP2 to feed error back from next layer
@@ -110,6 +111,22 @@ public class Node {
         newError *= MyMathUtils.sigmoidPrime(weightedInput);
 
         error = newError;
+    }
+
+    public void updateBiasNablaForMiniBatch()
+    {
+        biasNablaForMiniBatch += error;
+    }
+
+    /**
+     * TODO: refactor calculation with updateWeightFromNabla
+     * @param learningRate
+     * @param miniBatchSize
+     */
+    public void updateBiasFromNabla(double learningRate, int miniBatchSize)
+    {
+        bias = bias - (learningRate / miniBatchSize * biasNablaForMiniBatch);
+        biasNablaForMiniBatch = 0;
     }
 
     /*

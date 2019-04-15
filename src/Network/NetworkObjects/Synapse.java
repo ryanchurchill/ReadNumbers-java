@@ -10,6 +10,9 @@ public class Synapse {
     // changes slowly as network learns
     public double weight;
 
+    // changes per training example
+    public double weightNablaForMiniBatch = 0;
+
     /*
     CONSTRUCTORS AND FACTORIES
      */
@@ -40,8 +43,20 @@ public class Synapse {
         return "weight: " + weight;
     }
 
-//    public void setSynapsesToNextLayer()
-//    {
-//        nodeInPriorLayer.synapsesToNextLayer.add(this);
-//    }
+    public void updateWeightNablaForMiniBatch()
+    {
+        double nabla = nodeInPriorLayer.currentValue * nodeInNextLayer.error;
+        weightNablaForMiniBatch += nabla;
+    }
+
+    /**
+     * TODO: refactor calculation with updateBiasFromNabla
+     * @param learningRate
+     * @param miniBatchSize
+     */
+    public void updateWeightFromNabla(double learningRate, int miniBatchSize)
+    {
+        weight = weight - (learningRate / miniBatchSize * weightNablaForMiniBatch);
+        weightNablaForMiniBatch = 0;
+    }
 }

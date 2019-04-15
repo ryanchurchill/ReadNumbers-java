@@ -18,7 +18,7 @@ public class NetworkWithArrays {
 
     // size of number of neurons at each layer
     // 0 -> input layer
-    // sizes.length - 1 -> output layer
+    // sizes.length - 1 -> desiredOutput layer
     List<Integer> sizes;
 
     // matrix at index 0 are the biases at layer 1
@@ -89,7 +89,7 @@ public class NetworkWithArrays {
     /**
      *
      * @param input an (n, 1) matrix of the values going to the input layer
-     * @return an (m, 1) matrix of the values coming out of the output layer
+     * @return an (m, 1) matrix of the values coming out of the desiredOutput layer
      */
     private RealVector feedForward(RealVector input)
     {
