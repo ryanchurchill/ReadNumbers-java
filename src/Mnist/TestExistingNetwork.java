@@ -3,6 +3,7 @@ package Mnist;
 import Network.Learning.TrainingExample;
 import Network.NetworkUtils.*;
 import Network.*;
+import com.google.common.collect.Lists;
 
 import java.util.*;
 
@@ -10,10 +11,23 @@ public class TestExistingNetwork {
 
     static final String digitNetworkPath = "E:\\dev\\ai-az\\ReadNumbers-Java\\data\\wb_ryan_python.txt";
     static final String simpleNetworkPath = "E:\\dev\\ai-az\\ReadNumbers-Java\\data\\sandbox_ryan_python.txt";
+    static final String oneExamplePath = "E:\\dev\\ai-az\\ReadNumbers-Java\\data\\python_after_one_example.txt";
 
     public static void main(String[] args) throws Exception
     {
-        testSimpleNetwork();
+        testLightlyTrainedNetwork();
+    }
+
+    public static void testLightlyTrainedNetwork() throws Exception
+    {
+        LoadNetworkFromFileNumpy loader = new LoadNetworkFromFileNumpy(oneExamplePath);
+        NetworkWithObjects n = loader.load();
+
+        List<Image> allTrainingImages = ReadMnist.getTrainingImages();
+        List<List<Image>> imageBatches = Lists.partition(allTrainingImages, 1);
+        ImageToNetwork.trainNetworkOnImageBatch(n, imageBatches.get(0));
+
+        System.out.println(n);
     }
 
     public static void testSimpleNetwork() throws Exception
@@ -76,7 +90,7 @@ public class TestExistingNetwork {
 
     public static void testImage(NetworkWithObjects n, Image i) throws Exception
     {
-        ImageToNetwork.feedImageToNetwork(n, i, false);
+        ImageToNetwork.feedImageToNetwork(n, i);
         int actualValue = i.getActualDigit();
         int networkValue = ImageToNetwork.determineResultFromNetwork(n);
         System.out.println("Actual value: " + actualValue);
@@ -90,7 +104,7 @@ public class TestExistingNetwork {
 
     public static void testImageWithErrorDebugging(NetworkWithObjects n, Image i) throws Exception
     {
-        ImageToNetwork.feedImageToNetwork(n, i, true);
+        ImageToNetwork.feedImageToNetwork(n, i);
         int actualValue = i.getActualDigit();
         int networkValue = ImageToNetwork.determineResultFromNetwork(n);
         System.out.println("Actual value: " + actualValue);

@@ -163,10 +163,12 @@ public class NetworkWithObjects {
     public void trainWithMiniBatch(List<TrainingExample> miniBatch) throws ValidationException
     {
 //        resetAllNablas();
+        int counter = 0;
         for (TrainingExample te : miniBatch) {
             feedForward(te.input);
             calculateErrors(te.desiredOutput);
             updateAllNablas();
+//            System.out.println("Processed example " + counter++);
         }
 
         updateWeightsAndBiasesAfterProcessingMiniBatch(miniBatch.size());

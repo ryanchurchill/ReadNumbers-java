@@ -1,17 +1,15 @@
 package Mnist;
 
 import Exceptions.ValidationException;
+import Network.Learning.TrainingExample;
 import Network.NetworkWithObjects;
 
 import java.util.*;
 
 public class ImageToNetwork {
-    public static void feedImageToNetwork(NetworkWithObjects n, Image i, boolean calcError) throws Exception
+    public static void feedImageToNetwork(NetworkWithObjects n, Image i) throws Exception
     {
         n.feedForward(i.getPixelsForNetwork());
-        if (calcError) {
-            n.calculateErrors(determineExpectedOutputValuesForDigit(i.getActualDigit()));
-        }
     }
 
     /**
@@ -31,6 +29,15 @@ public class ImageToNetwork {
             }
         }
         return closestValueIndex;
+    }
+
+    public static void trainNetworkOnImageBatch(NetworkWithObjects n, List<Image> miniBatch) throws ValidationException
+    {
+        List<TrainingExample> tes = new ArrayList<>();
+        for (Image i : miniBatch) {
+            tes.add(new TrainingExample(i.getPixelsForNetwork(), determineExpectedOutputValuesForDigit(i.getActualDigit())));
+        }
+        n.trainWithMiniBatch(tes);
     }
 
     /**
