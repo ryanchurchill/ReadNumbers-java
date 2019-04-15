@@ -104,8 +104,12 @@ public class Node {
 
         // sum weighted errors from all nodes in next layer
         for (Synapse synapse : synapsesToNextLayer) {
-            newError += synapse.nodeInPriorLayer.feedForward() * synapse.weight;
+            newError += synapse.nodeInNextLayer.error * synapse.weight;
         }
+        // multiply by sigmoid prime of this node's Z
+        newError *= weightedInput;
+
+        error = newError;
     }
 
     /*
@@ -116,11 +120,10 @@ public class Node {
     {
         StringBuilder sb = new StringBuilder();
 
-        if (synapsesFromPriorLayer.isEmpty()) {
-            sb.append("Input Node value: " + currentValue);
-        }
-        else {
-            sb.append("value: " + currentValue);
+        sb.append("value: " + currentValue);
+        sb.append(" error: " + error);
+        if (!synapsesFromPriorLayer.isEmpty()) {
+
             sb.append(" bias: " + bias);
             sb.append(" synapses to prior layer: ");
             for (Synapse synapse : synapsesFromPriorLayer) {

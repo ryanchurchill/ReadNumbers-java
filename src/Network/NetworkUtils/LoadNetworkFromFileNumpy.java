@@ -102,7 +102,12 @@ public class LoadNetworkFromFileNumpy {
                 // if string starts with [[, it's the beginning of the list of biases for a layer
                 if (line.substring(0, 2).equals("[[")) {
                     biases.add(new ArrayList<>());
-                    biasesArrayString = line.substring(1);
+                    // same line can start end end with double-brackets
+                    if (line.substring(line.length() - 2).equals("]]")) {
+                        biasesArrayString = line.substring(1, line.length() - 1);
+                    } else {
+                        biasesArrayString = line.substring(1);
+                    }
                 } else if (line.substring(line.length() - 2).equals("]]")) {
                     biasesArrayString = line.substring(0, line.length() - 1);
                 } else {
@@ -119,7 +124,12 @@ public class LoadNetworkFromFileNumpy {
                 // if string starts with [[, it's the beginning of the list of weights for a layer
                 if (line.substring(0, 2).equals("[[")) {
                     weights.add(new ArrayList<>());
-                    weightsArrayString = line.substring(1);
+                    // same line can start end end with double-brackets
+                    if (line.substring(line.length() - 2).equals("]]")) {
+                        weightsArrayString = line.substring(1, line.length() - 1);
+                    } else {
+                        weightsArrayString = line.substring(1);
+                    }
                 } else if (line.substring(line.length() - 2).equals("]]")) {
                     weightsArrayString = line.substring(0, line.length() - 1);
                 } else {

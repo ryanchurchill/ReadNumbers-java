@@ -6,9 +6,12 @@ import Network.NetworkWithObjects;
 import java.util.*;
 
 public class ImageToNetwork {
-    public static void feedImageToNetwork(NetworkWithObjects n, Image i) throws Exception
+    public static void feedImageToNetwork(NetworkWithObjects n, Image i, boolean calcError) throws Exception
     {
         n.feedForward(i.getPixelsForNetwork());
+        if (calcError) {
+            n.calculateErrors(i.getPixelsForNetwork(), determineExpectedOutputValuesForDigit(i.getActualDigit()));
+        }
     }
 
     /**
