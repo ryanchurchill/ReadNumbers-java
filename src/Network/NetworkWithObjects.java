@@ -107,11 +107,23 @@ public class NetworkWithObjects {
             throw new ValidationException("cannot feed forward empty network");
         }
 
+        // TODO: optimize by skipping first layer
+        clearAllValues();
+
         // initialize neurons in first layer with input
         getInputLayer().initializeWithInputData(input);
 
         // call recursive method on desiredOutput layer
         getOutputLayer().feedForward();
+    }
+
+    private void clearAllValues()
+    {
+        for (Layer l : layers) {
+            for (Node n : l.nodes) {
+                n.currentValue = null;
+            }
+        }
     }
 
     /**

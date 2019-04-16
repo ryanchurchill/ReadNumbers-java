@@ -62,6 +62,10 @@ public class Node {
      */
     public double feedForward() throws ValidationException
     {
+        if (currentValue != null) {
+            return currentValue;
+        }
+
         if (!synapsesFromPriorLayer.isEmpty()) {
             double newVal = 0;
 

@@ -12,7 +12,7 @@ public class TrainWithMnist {
     {
         // "params"
         int miniBatchSize = 10;
-        int epochs = 1;
+        int epochs = 10;
 //        int learningRate = 3; // hard-coded in nn
 
         ArrayList<Integer> sizes = new ArrayList<>();
@@ -24,21 +24,21 @@ public class TrainWithMnist {
         // TEMP to speed things up
 //        imageBatches = imageBatches.subList(0, 1000);
 
-        List<Image> testImages = allTrainingImages.subList(0, 1000);
+        List<Image> testImages = allTrainingImages.subList(0, 10000);
 
         System.out.println("Epoch -1");
         outputBatchTest(testImages);
 
         for (int epochCounter = 0; epochCounter < epochs; epochCounter++) {
+            // TODO: randomize training image order
             System.out.println("Starting Epoch " + epochCounter);
             int batchCounter = 0;
             for (List<Image> miniBatch : imageBatches) {
                 ImageToNetwork.trainNetworkOnImageBatch(n, miniBatch);
-                printWithTimestamp("Completed batch " + batchCounter++);
+//                printWithTimestamp("Completed batch " + batchCounter);
+                batchCounter++;
             }
             printWithTimestamp("Completed Epoch " + epochCounter);
-            epochCounter++;
-
             outputBatchTest(testImages);
         }
     }
