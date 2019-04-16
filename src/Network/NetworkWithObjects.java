@@ -2,6 +2,7 @@ package Network;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.*;
 
 import Exceptions.ValidationException;
 import Network.Learning.TrainingExample;
@@ -102,6 +103,11 @@ public class NetworkWithObjects {
         return layers.size();
     }
 
+    /**
+     * Deprecated! Iterative is much faster!
+     * @param input
+     * @throws ValidationException
+     */
     public void feedForwardRecursive(List<Double> input) throws ValidationException
     {
         if (layers.isEmpty()) {
@@ -141,6 +147,75 @@ public class NetworkWithObjects {
                 n.weightedInput = val;
                 n.currentValue = MyMathUtils.sigmoid(val);
             }
+        }
+    }
+
+    public void feedForwardParallel2(List<Double> input) throws ValidationException {
+        if (layers.isEmpty()) {
+            throw new ValidationException("cannot feed forward empty network");
+        }
+
+        // initialize neurons in first layer with input
+        getInputLayer().initializeWithInputData(input);
+
+        for (int i = 1; i < getLayerCount(); i++) {
+            Layer l = layers.get(i);
+            l.nodes.parallelStream().forEach(n -> {
+                double val = 0;
+                for (Synapse s : n.synapsesFromPriorLayer) {
+                    val += s.nodeInPriorLayer.currentValue * s.weight;
+                }
+                n.weightedInput = val;
+                n.currentValue = MyMathUtils.sigmoid(val);
+            });
+        }
+    }
+
+    /**
+     * Slow and bad!
+     * @param input
+     * @throws ValidationException
+     */
+    public void feedForwardParallel(List<Double> input) throws ValidationException {
+        if (layers.isEmpty()) {
+            throw new ValidationException("cannot feed forward empty network");
+        }
+
+        // initialize neurons in first layer with input
+        getInputLayer().initializeWithInputData(input);
+
+        for (int i = 1; i < getLayerCount(); i++) {
+            Layer l = layers.get(i);
+            ExecutorService service = Executors.newFixedThreadPool(50);
+            for (Node n : l.nodes) {
+                service.execute(new FeedForwardNodeTask(n));
+            }
+            // this will get blocked until all task finish
+            service.shutdown();
+            try {
+                service.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private static class FeedForwardNodeTask implements Runnable {
+        Node n;
+
+        protected FeedForwardNodeTask(Node _n)
+        {
+            n = _n;
+        }
+
+        public void run()
+        {
+            double val = 0;
+            for (Synapse s : n.synapsesFromPriorLayer) {
+                val += s.nodeInPriorLayer.currentValue * s.weight;
+            }
+            n.weightedInput = val;
+            n.currentValue = MyMathUtils.sigmoid(val);
         }
     }
 

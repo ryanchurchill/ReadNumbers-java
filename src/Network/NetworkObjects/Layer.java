@@ -125,6 +125,10 @@ public class Layer {
         return (layerNum == 0);
     }
 
+    /**
+     * @Deprecated
+     * @throws ValidationException
+     */
     public void feedForward() throws ValidationException
     {
         for (Node node : nodes) {

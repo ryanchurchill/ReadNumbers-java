@@ -15,6 +15,9 @@ public class Image {
     // from the file, we get a range of 0-255. We normalize into the 0-1 range.
     double[][] pixels = new double[PIXEL_LENGTH][PIXEL_LENGTH];
 
+    // cache
+    List<Double> pixelsForNetwork;
+
 
     public int getActualDigit() {
         return actualDigit;
@@ -95,12 +98,17 @@ public class Image {
 
     public List<Double> getPixelsForNetwork()
     {
+        if (pixelsForNetwork != null) {
+            return pixelsForNetwork;
+        }
+
         List<Double> ret = new ArrayList<>();
         for (int y = 0; y < PIXEL_LENGTH; y++) {
             for (int x=0; x < PIXEL_LENGTH; x++) {
                 ret.add(pixels[x][y]);
             }
         }
+        pixelsForNetwork = ret;
         return ret;
     }
 

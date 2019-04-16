@@ -35,9 +35,11 @@ public class TestNetworks {
 //            System.out.println(duration);
 //        }
 
-        int count = 1000;
+        int count = 10000;
         long duration = timeBatchFeedForwardObjects(n, allTrainingImages.subList(0, count));
         double rate = ((double) count / (double)duration) * 1000.0;
+        System.out.format("Duration: %d milliseconds", duration);
+        System.out.println();
         System.out.println("Avg rate: " + rate + " / sec");
     }
 
@@ -51,7 +53,7 @@ public class TestNetworks {
 
         List<Image> allTrainingImages = ReadMnist.getTrainingImages();
 
-        int count = 1000;
+        int count = 10000;
         long duration = timeBatchFeedForwardArrays(n, allTrainingImages.subList(0, count));
         double rate = ((double) count / (double)duration) * 1000.0;
         System.out.println("Avg rate: " + rate + " / sec");

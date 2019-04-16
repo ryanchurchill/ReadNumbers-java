@@ -57,6 +57,7 @@ public class Node {
      */
 
     /**
+     * Deprecated
      * sets currentValue and returns it based on the nodes in the prior layer
      * @return
      */
