@@ -13,6 +13,7 @@ Performance 4/15/19
 - 18 seconds for full epoch (of full set)
 - Uses 10% of CPU
 - Python project takes 6 seconds for full epoch, uses 50% of CPU
+- Python seems to be 10x faster at feed_forward
  */
 
 public class TrainWithMnist {

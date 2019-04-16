@@ -17,7 +17,7 @@ public class Image {
 
     // cache
     List<Double> pixelsForNetwork;
-
+    RealVector pixelsForArrayNetwork;
 
     public int getActualDigit() {
         return actualDigit;
@@ -46,6 +46,9 @@ public class Image {
                 yPos++;
             }
         }
+
+        setPixelsForNetwork();
+        setPixelsForArrayNetwork();
     }
 
     private double normalize(int originalValue)
@@ -98,10 +101,11 @@ public class Image {
 
     public List<Double> getPixelsForNetwork()
     {
-        if (pixelsForNetwork != null) {
-            return pixelsForNetwork;
-        }
+        return pixelsForNetwork;
+    }
 
+    public void setPixelsForNetwork()
+    {
         List<Double> ret = new ArrayList<>();
         for (int y = 0; y < PIXEL_LENGTH; y++) {
             for (int x=0; x < PIXEL_LENGTH; x++) {
@@ -109,10 +113,14 @@ public class Image {
             }
         }
         pixelsForNetwork = ret;
-        return ret;
     }
 
     public RealVector getPixelsForArrayNetwork()
+    {
+        return pixelsForArrayNetwork;
+    }
+
+    public void setPixelsForArrayNetwork()
     {
         double[] ret = new double[PIXEL_LENGTH * PIXEL_LENGTH];
         int counter = 0;
@@ -121,6 +129,6 @@ public class Image {
                 ret[counter++] = (pixels[x][y]);
             }
         }
-        return MatrixUtils.createRealVector(ret);
+        pixelsForArrayNetwork = MatrixUtils.createRealVector(ret);
     }
 }
