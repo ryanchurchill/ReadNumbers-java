@@ -3,10 +3,17 @@ package Mnist;
 import Network.NetworkWithObjects;
 import com.google.common.collect.Lists;
 
+import java.text.DecimalFormat;
 import java.util.*;
 
 public class TrainWithMnist {
     NetworkWithObjects n;
+
+    public static void main(String[] args) throws Exception
+    {
+        TrainWithMnist twn = new TrainWithMnist();
+        twn.train();
+    }
 
     public void train() throws Exception
     {
@@ -32,13 +39,21 @@ public class TrainWithMnist {
         for (int epochCounter = 0; epochCounter < epochs; epochCounter++) {
             // TODO: randomize training image order
             System.out.println("Starting Epoch " + epochCounter);
+            long startTime = System.currentTimeMillis();
             int batchCounter = 0;
             for (List<Image> miniBatch : imageBatches) {
                 ImageToNetwork.trainNetworkOnImageBatch(n, miniBatch);
 //                printWithTimestamp("Completed batch " + batchCounter);
                 batchCounter++;
             }
-            printWithTimestamp("Completed Epoch " + epochCounter);
+            long endTime = System.currentTimeMillis();
+            long duration = endTime - startTime;
+//            System.out.println("Completed Epoch " + epochCounter + " in " + duration + " ms");
+            DecimalFormat formatter = new DecimalFormat("#,###");
+            System.out.format("Completed Epoch %d in %s milliseconds", epochCounter, formatter.format(duration));
+            System.out.println();
+
+
             outputBatchTest(testImages);
         }
     }
@@ -65,11 +80,5 @@ public class TrainWithMnist {
         int actualValue = i.getActualDigit();
         int networkValue = ImageToNetwork.determineResultFromNetwork(n);
         return (actualValue == networkValue);
-    }
-
-    public static void main(String[] args) throws Exception
-    {
-        TrainWithMnist twn = new TrainWithMnist();
-        twn.train();
     }
 }
