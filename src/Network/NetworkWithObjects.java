@@ -6,6 +6,7 @@ import java.util.List;
 import Exceptions.ValidationException;
 import Network.Learning.TrainingExample;
 import Network.NetworkObjects.*;
+import Util.MyMathUtils;
 
 /**
  * General rule: we initialize the network from left to right.
@@ -101,20 +102,46 @@ public class NetworkWithObjects {
         return layers.size();
     }
 
-    public void feedForward(List<Double> input) throws ValidationException
+    public void feedForwardRecursive(List<Double> input) throws ValidationException
     {
         if (layers.isEmpty()) {
             throw new ValidationException("cannot feed forward empty network");
         }
 
-        // TODO: optimize by skipping first layer
-        clearAllValues();
+        // skip clearing first layer since it will be initialized with new data
+        for (int i = 1; i < getLayerCount(); i++) {
+            Layer l = layers.get(i);
+            for (Node n : l.nodes) {
+                n.currentValue = null;
+            }
+        }
 
         // initialize neurons in first layer with input
         getInputLayer().initializeWithInputData(input);
 
         // call recursive method on desiredOutput layer
         getOutputLayer().feedForward();
+    }
+
+    public void feedForwardIterative(List<Double> input) throws ValidationException {
+        if (layers.isEmpty()) {
+            throw new ValidationException("cannot feed forward empty network");
+        }
+
+        // initialize neurons in first layer with input
+        getInputLayer().initializeWithInputData(input);
+
+        for (int i = 1; i < getLayerCount(); i++) {
+            Layer l = layers.get(i);
+            for (Node n : l.nodes) {
+                double val = 0;
+                for (Synapse s : n.synapsesFromPriorLayer) {
+                    val += s.nodeInPriorLayer.currentValue * s.weight;
+                }
+                n.weightedInput = val;
+                n.currentValue = MyMathUtils.sigmoid(val);
+            }
+        }
     }
 
     private void clearAllValues()
@@ -128,7 +155,7 @@ public class NetworkWithObjects {
 
     /**
      * Update the network so every node has a NodeLearningProperties object with its error
-     * Must be called after feedForward
+     * Must be called after feedForwardRecursive
      * @param desiredOutput
      */
     public void calculateErrors(List<Double> desiredOutput) throws ValidationException
@@ -152,7 +179,7 @@ public class NetworkWithObjects {
 
     /**
      * Deprecated! Use trainWithMiniBatch
-     * Must be called after feedForward and calculateErrors
+     * Must be called after feedForwardRecursive and calculateErrors
      * @throws ValidationException
      */
     public void updateWeightsAndBiasesAfterSingleTrainingExample() throws ValidationException
@@ -177,7 +204,8 @@ public class NetworkWithObjects {
 //        resetAllNablas();
         int counter = 0;
         for (TrainingExample te : miniBatch) {
-            feedForward(te.input);
+//            feedForwardRecursive(te.input);
+            feedForwardIterative(te.input);
             calculateErrors(te.desiredOutput);
             updateAllNablas();
 //            System.out.println("Processed example " + counter++);
@@ -266,7 +294,7 @@ public class NetworkWithObjects {
 
         ArrayList<Double> input = new ArrayList<>();
         input.add(.3); input.add(.7);
-        n.feedForward(input);
+        n.feedForwardRecursive(input);
         System.out.println(n);
 
     }

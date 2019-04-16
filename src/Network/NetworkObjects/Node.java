@@ -62,11 +62,7 @@ public class Node {
      */
     public double feedForward() throws ValidationException
     {
-        if (currentValue != null) {
-            return currentValue;
-        }
-
-        if (!synapsesFromPriorLayer.isEmpty()) {
+        if (currentValue == null && !synapsesFromPriorLayer.isEmpty()) {
             double newVal = 0;
 
             // sum weighted values from all nodes in prior layer

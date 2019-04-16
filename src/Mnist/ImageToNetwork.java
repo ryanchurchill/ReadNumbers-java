@@ -10,7 +10,7 @@ import java.util.*;
 public class ImageToNetwork {
     public static void feedImageToNetwork(NetworkWithObjects n, Image i) throws Exception
     {
-        n.feedForward(i.getPixelsForNetwork());
+        n.feedForwardIterative(i.getPixelsForNetwork());
     }
 
     public static void feedImageToNetworkWithArrays(NetworkWithArrays n, Image i) throws Exception

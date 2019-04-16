@@ -124,7 +124,7 @@ public class TestNetworks {
         System.out.println("Initial network:");
         System.out.println(simpleNetwork);
 
-//        simpleNetwork.feedForward(input2);
+//        simpleNetwork.feedForwardRecursive(input2);
 //        simpleNetwork.calculateErrors(desiredOutput2);
 //        simpleNetwork.updateWeightsAndBiasesAfterSingleTrainingExample();
 
