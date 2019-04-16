@@ -6,6 +6,15 @@ import com.google.common.collect.Lists;
 import java.text.DecimalFormat;
 import java.util.*;
 
+/*
+Performance 4/15/19
+- Object Oriented (no arrays)
+- Iterative feed-forward
+- 18 seconds for full epoch (of full set)
+- Uses 10% of CPU
+- Python project takes 6 seconds for full epoch, uses 50% of CPU
+ */
+
 public class TrainWithMnist {
     NetworkWithObjects n;
 
