@@ -6,6 +6,7 @@ import java.util.List;
 import Exceptions.ValidationException;
 import Network.Learning.TrainingExample;
 import Network.NetworkObjects.*;
+import Performance.Globals;
 import Util.MyMathUtils;
 
 /**
@@ -143,30 +144,29 @@ public class NetworkWithObjects {
         }
 
         // initialize neurons in first layer with input
-//        Globals.initializeTimer.start();
+        Globals.initializeTimer.start();
         getInputLayer().setNodeValuesWithInputData(input);
-//        Globals.initializeTimer.stop();
+        Globals.initializeTimer.stop();
 
-//        Globals.ffTimer.start();
+        Globals.ffTimer.start();
         for (int i = 1; i < getLayerCount(); i++) {
-//            Globals.layerTimer.start();
+            Globals.layerTimer.start();
             Layer l = layers.get(i);
             for (Node n : l.nodeArray) {
-//                Globals.nodeTimer.start();
+                Globals.nodeTimer.start();
                 double val = 0;
                 for (Synapse s : n.synapsesFromPriorLayerArray) {
-//                    Globals.synapseTimer.start();
+                    Globals.synapseTimer.start();
                     val += s.nodeInPriorLayer.currentValue * s.weight;
-//                    Globals.synapseTimer.stop();
+                    Globals.synapseTimer.stop();
                 }
                 n.weightedInput = val;
                 n.currentValue = MyMathUtils.sigmoid(val);
-//                Globals.nodeTimer.stop();
+                Globals.nodeTimer.stop();
             }
-//            Globals.layerTimer.stop();
+            Globals.layerTimer.stop();
         }
-//        Globals.ffTimer.stop();
-//        Globals.ffTimer.stop();
+        Globals.ffTimer.stop();
     }
 
 //    public void feedForwardParallel2(List<Double> input) throws ValidationException {

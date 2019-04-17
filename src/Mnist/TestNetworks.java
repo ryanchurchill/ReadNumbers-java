@@ -20,12 +20,17 @@ public class TestNetworks {
     {
 //        sigmoidPerfomanceTest();
 //        for (int i = 0; i < 10; i++) {
-//            addingListsPerfTest();
-//            Thread.sleep(1000);
 //            addingArraysPerfTest();
-//            Thread.sleep(1000);
+//            Thread.sleep(200);
 //        }
-        performanceTestingFFObjects();
+//        for (int i = 0; i < 10; i++) {
+//            addingListsPerfTest();
+//            Thread.sleep(200);
+//        }
+
+        for (int i = 0; i < 10; i++) {
+            performanceTestingFFObjects();
+        }
 //        performanceTestingArrays();
     }
 
@@ -86,7 +91,7 @@ public class TestNetworks {
 
         long startTime = System.currentTimeMillis();
 
-        addArrays(arr1, arr2);
+        addArrays2(arr1, arr2);
 
         long endTime = System.currentTimeMillis();
         long duration = (endTime - startTime);
@@ -132,6 +137,15 @@ public class TestNetworks {
         double[] ret = new double[arr1.length];
         for (int i = 0; i < arr1.length; i++) {
             ret[i] = arr1[i] + arr2[i];
+        }
+        return ret;
+    }
+
+    private static List<Double> addArrays2(double[] arr1, double[] arr2)
+    {
+        List<Double> ret = new ArrayList<>();
+        for (int i = 0; i < arr1.length; i++) {
+            ret.add(arr1[i] + arr2[i]);
         }
         return ret;
     }

@@ -2,6 +2,8 @@ package Performance;
 
 public class Globals
 {
+    public static boolean timing = false;
+
     public static Timer initializeTimer = new Timer();
     public static Timer ffTimer = new Timer();
     public static Timer layerTimer = new Timer();

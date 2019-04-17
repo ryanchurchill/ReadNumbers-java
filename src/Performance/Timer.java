@@ -11,11 +11,15 @@ public class Timer {
 
     public void start()
     {
-        start = System.currentTimeMillis();
+        if (Globals.timing) {
+            start = System.currentTimeMillis();
+        }
     }
 
     public void stop()
     {
-        timeInMs += System.currentTimeMillis() - start;
+        if (Globals.timing) {
+            timeInMs += System.currentTimeMillis() - start;
+        }
     }
 }
