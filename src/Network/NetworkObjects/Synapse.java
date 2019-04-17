@@ -22,8 +22,8 @@ public class Synapse {
         weight = _weight;
         nodeInPriorLayer = _nodeInPriorLayer;
         nodeInNextLayer = _nodeInNextLayer;
-        nodeInPriorLayer.synapsesToNextLayer.add(this);
-        nodeInNextLayer.synapsesFromPriorLayer.add(this); // TODO: this is duplicate..
+        nodeInPriorLayer.synapsesToNextLayerList.add(this);
+        nodeInNextLayer.synapsesFromPriorLayerList.add(this);
     }
 
     public static Synapse initializeSynapseRandom(Node _nodeInPriorLayer, Node _nodeInNextLayer)

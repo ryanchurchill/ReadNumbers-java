@@ -6,7 +6,8 @@ import java.util.*;
 
 public class Layer {
     public int layerNum;
-    public List<Node> nodes;
+    public List<Node> nodeList;
+    public Node[] nodeArray;
 
     /*
     CONSTRUCTORS AND FACTORIES
@@ -14,7 +15,7 @@ public class Layer {
 
     private Layer(int _layerNum) {
         layerNum = _layerNum;
-        nodes = new ArrayList<>();
+        nodeList = new ArrayList<>();
     }
 
     public static Layer initializeLayerRandom(int nodeCount, int layerNum, Layer priorLayer) throws ValidationException {
@@ -29,7 +30,7 @@ public class Layer {
 
         for (int i = 0; i < nodeCount; i++) {
             Node n = Node.initializeNodeRandom(priorLayer);
-            layer.nodes.add(n);
+            layer.nodeList.add(n);
         }
         return layer;
     }
@@ -44,7 +45,7 @@ public class Layer {
 
         for (int i = 0; i < nodeCount; i++) {
             Node n = new Node();
-            layer.nodes.add(n);
+            layer.nodeList.add(n);
         }
         return layer;
     }
@@ -87,9 +88,9 @@ public class Layer {
             Node n = new Node(bias);
             for (int nodeIndexPriorLayer = 0; nodeIndexPriorLayer < priorLayer.nodeCount(); nodeIndexPriorLayer++) {
                 double weight = weightsFromPriorLayer.get(nodeIndexThisLayer).get(nodeIndexPriorLayer);
-                new Synapse(weight, priorLayer.nodes.get(nodeIndexPriorLayer), n);
+                new Synapse(weight, priorLayer.nodeList.get(nodeIndexPriorLayer), n);
             }
-            layer.nodes.add(n);
+            layer.nodeList.add(n);
 
         }
 
@@ -100,23 +101,34 @@ public class Layer {
     OTHER
      */
 
+    public void getReadyToProcess()
+    {
+        nodeArray = new Node[nodeList.size()];
+        nodeArray = nodeList.toArray(nodeArray);
+        nodeList.clear(); // to sanity check we aren't still using the list
+
+        for (Node n : nodeArray) {
+            n.getReadyToProcess();
+        }
+    }
+
     /**
      * First layer only - start of feeding data through the network
      * @param input
      */
-    public void initializeWithInputData(List<Double> input) throws ValidationException
+    public void setNodeValuesWithInputData(List<Double> input) throws ValidationException
     {
         // validate
         if (!isInputLayer()) {
             throw new ValidationException("layerNum must be 0 to initialize with input data");
         }
-        if (input.size() != nodes.size()) {
+        if (input.size() != nodeArray.length) {
             throw new ValidationException("input size does not match layer size");
         }
 
         // initialize
         for (int i = 0; i < input.size(); i++) {
-            nodes.get(i).currentValue = input.get(i);
+            nodeArray[i].currentValue = input.get(i);
         }
     }
 
@@ -131,14 +143,15 @@ public class Layer {
      */
     public void feedForward() throws ValidationException
     {
-        for (Node node : nodes) {
+        for (Node node : nodeArray) {
             node.feedForward();
         }
     }
 
     public int nodeCount()
     {
-        return nodes.size();
+        // temporary hack to get around list/array discrepancy
+        return Math.max(nodeList.size(), nodeArray.length);
     }
 
     /*
@@ -149,7 +162,7 @@ public class Layer {
     {
         StringBuilder sb = new StringBuilder();
         sb.append("Layer: " + layerNum + " Count: " + nodeCount() + System.lineSeparator());
-        for (Node n : nodes) {
+        for (Node n : nodeList) {
             sb.append(n.toString() + System.lineSeparator());
         }
 

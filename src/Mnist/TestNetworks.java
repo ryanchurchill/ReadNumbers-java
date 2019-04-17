@@ -19,13 +19,13 @@ public class TestNetworks {
     public static void main(String[] args) throws Exception
     {
 //        sigmoidPerfomanceTest();
-        for (int i = 0; i < 10; i++) {
-            addingListsPerfTest();
-            Thread.sleep(1000);
-            addingArraysPerfTest();
-            Thread.sleep(1000);
-        }
-//        performanceTestingFFObjects();
+//        for (int i = 0; i < 10; i++) {
+//            addingListsPerfTest();
+//            Thread.sleep(1000);
+//            addingArraysPerfTest();
+//            Thread.sleep(1000);
+//        }
+        performanceTestingFFObjects();
 //        performanceTestingArrays();
     }
 
@@ -143,6 +143,7 @@ public class TestNetworks {
         ArrayList<Integer> sizes = new ArrayList<>();
         sizes.add(784); sizes.add(30); sizes.add(10);
         NetworkWithObjects n = NetworkWithObjects.initializeNetworkRandom(sizes);
+        n.turnOn();
 
         List<Image> allTrainingImages = ReadMnist.getTrainingImages();
 

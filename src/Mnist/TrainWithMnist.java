@@ -35,6 +35,7 @@ public class TrainWithMnist {
         ArrayList<Integer> sizes = new ArrayList<>();
         sizes.add(784); sizes.add(30); sizes.add(10);
         n = NetworkWithObjects.initializeNetworkRandom(sizes);
+        n.turnOn();
 
         List<Image> allTrainingImages = ReadMnist.getTrainingImages();
         List<List<Image>> imageBatches = Lists.partition(allTrainingImages, miniBatchSize);
