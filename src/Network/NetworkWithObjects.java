@@ -7,12 +7,11 @@ import java.util.concurrent.*;
 import Exceptions.ValidationException;
 import Network.Learning.TrainingExample;
 import Network.NetworkObjects.*;
+import Performance.Globals;
 import Util.MyMathUtils;
 
 /**
  * General rule: we initialize the network from left to right.
- * When we feed forward the network, code flow is recursive from right to left (leading to propogation from left to right).
- * TODO: don't know yet how back prop will work
  */
 public class NetworkWithObjects {
     List<Layer> layers;
@@ -135,19 +134,30 @@ public class NetworkWithObjects {
         }
 
         // initialize neurons in first layer with input
+//        Globals.initializeTimer.start();
         getInputLayer().initializeWithInputData(input);
+//        Globals.initializeTimer.stop();
 
+//        Globals.ffTimer.start();
         for (int i = 1; i < getLayerCount(); i++) {
+//            Globals.layerTimer.start();
             Layer l = layers.get(i);
             for (Node n : l.nodes) {
+//                Globals.nodeTimer.start();
                 double val = 0;
                 for (Synapse s : n.synapsesFromPriorLayer) {
+//                    Globals.synapseTimer.start();
                     val += s.nodeInPriorLayer.currentValue * s.weight;
+//                    Globals.synapseTimer.stop();
                 }
                 n.weightedInput = val;
                 n.currentValue = MyMathUtils.sigmoid(val);
+//                Globals.nodeTimer.stop();
             }
+//            Globals.layerTimer.stop();
         }
+//        Globals.ffTimer.stop();
+//        Globals.ffTimer.stop();
     }
 
     public void feedForwardParallel2(List<Double> input) throws ValidationException {

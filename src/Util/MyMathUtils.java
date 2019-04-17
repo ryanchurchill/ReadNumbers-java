@@ -35,6 +35,11 @@ public class MyMathUtils {
         return ret;
     }
 
+    /**
+     * sigmoid: 2,327 milliseconds for 10 million, or 4,297,379 / sec
+     * @param x
+     * @return
+     */
     public static double sigmoid(double x)
     {
         return 1 / (1 + Math.exp(-x));

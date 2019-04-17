@@ -3,8 +3,11 @@ package Mnist;
 import Network.Learning.TrainingExample;
 import Network.NetworkUtils.*;
 import Network.*;
+import Performance.Globals;
+import Util.MyMathUtils;
 import com.google.common.collect.Lists;
 
+import java.text.DecimalFormat;
 import java.util.*;
 
 public class TestNetworks {
@@ -15,11 +18,117 @@ public class TestNetworks {
 
     public static void main(String[] args) throws Exception
     {
-        performanceTestingObjects();
-        performanceTestingArrays();
+//        sigmoidPerfomanceTest();
+//        addingListsPerfTest();
+        addingArraysPerfTest();
+//        performanceTestingFFObjects();
+//        performanceTestingArrays();
     }
 
-    public static void performanceTestingObjects() throws Exception
+    public static void sigmoidPerfomanceTest()
+    {
+        int count = 10000000;
+
+        long startTime = System.currentTimeMillis();
+
+        // sigmoid: 2,327 milliseconds or 4,297,379 / sec
+        for (int i = 1; i <= count; i++) {
+            MyMathUtils.sigmoid(i);
+        }
+
+        long endTime = System.currentTimeMillis();
+        long duration = (endTime - startTime);
+        double rate = ((double) count / (double)duration) * 1000.0;
+        DecimalFormat formatter = new DecimalFormat("#,###");
+        System.out.format("Took %s milliseconds", formatter.format(duration));
+        System.out.println();
+        System.out.format("Rate: %s / sec", formatter.format(rate));
+    }
+
+    /*
+    Took 13 milliseconds for 100,000
+    Rate: 7,692,308 / sec
+     */
+    public static void addingListsPerfTest()
+    {
+        int count = 100000;
+        List<Double> list1 = generateRandomList(count);
+        List<Double> list2 = generateRandomList(count);
+
+        long startTime = System.currentTimeMillis();
+
+        addLists(list1, list2);
+
+        long endTime = System.currentTimeMillis();
+        long duration = (endTime - startTime);
+        double rate = ((double) count / (double)duration) * 1000.0;
+        DecimalFormat formatter = new DecimalFormat("#,###");
+        System.out.format("Took %s milliseconds", formatter.format(duration));
+        System.out.println();
+        System.out.format("Rate: %s / sec", formatter.format(rate));
+    }
+
+    /*
+    Took 1-2 milliseconds for 100,000
+     */
+    public static void addingArraysPerfTest()
+    {
+        int count = 100000;
+        double[] arr1 = generateRandomArray(count);
+        double[] arr2 = generateRandomArray(count);
+
+        long startTime = System.currentTimeMillis();
+
+        addArrays(arr1, arr2);
+
+        long endTime = System.currentTimeMillis();
+        long duration = (endTime - startTime);
+        double rate = ((double) count / (double)duration) * 1000.0;
+        DecimalFormat formatter = new DecimalFormat("#,###");
+        System.out.format("Took %s milliseconds", formatter.format(duration));
+        System.out.println();
+        System.out.format("Rate: %s / sec", formatter.format(rate));
+    }
+
+    private static List<Double> generateRandomList(int size)
+    {
+        Random r = new Random();
+        List<Double> ret = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
+            ret.add(r.nextGaussian());
+        }
+        return ret;
+    }
+
+    private static List<Double> addLists(List<Double> list1, List<Double> list2)
+    {
+        List<Double> ret = new ArrayList<>();
+        for (int i = 0; i < list1.size(); i++) {
+            ret.add(list1.get(i) + list2.get(1));
+        }
+        return ret;
+    }
+
+    private static double[] generateRandomArray(int size)
+    {
+        Random r = new Random();
+        double[] ret = new double[size];
+        for (int i = 0; i < size; i++) {
+            ret[i] = r.nextGaussian();
+        }
+        return ret;
+    }
+
+    private static double[] addArrays(double[] arr1, double[] arr2)
+    {
+        double[] ret = new double[arr1.length];
+        for (int i = 0; i < arr1.length; i++) {
+            ret[i] = arr1[i] + arr2[i];
+        }
+        return ret;
+    }
+
+    public static void performanceTestingFFObjects() throws Exception
     {
         System.out.println("Testing NetworkWithObjects...");
 
@@ -35,12 +144,29 @@ public class TestNetworks {
 //            System.out.println(duration);
 //        }
 
+        /*
+        Duration: 985 milliseconds
+        Avg rate: 10,152.284263959391 / sec
+         */
+
         int count = 10000;
         long duration = timeBatchFeedForwardObjects(n, allTrainingImages.subList(0, count));
         double rate = ((double) count / (double)duration) * 1000.0;
-        System.out.format("Duration: %d milliseconds", duration);
+        DecimalFormat formatter = new DecimalFormat("#,###");
+        System.out.format("Duration: %s milliseconds", formatter.format(duration));
         System.out.println();
-        System.out.println("Avg rate: " + rate + " / sec");
+        System.out.format("Avg rate: %s / sec", formatter.format(rate));
+        System.out.println();
+        System.out.format("initializeTimer: %s", formatter.format(Globals.initializeTimer.getTimeInMs()));
+        System.out.println();
+        System.out.format("ffTimer: %s", formatter.format(Globals.ffTimer.getTimeInMs()));
+        System.out.println();
+        System.out.format("layerTimer: %s", formatter.format(Globals.layerTimer.getTimeInMs()));
+        System.out.println();
+        System.out.format("nodeTimer: %s", formatter.format(Globals.nodeTimer.getTimeInMs()));
+        System.out.println();
+        System.out.format("synapseTimer: %s", formatter.format(Globals.synapseTimer.getTimeInMs()));
+        System.out.println();
     }
 
     public static void performanceTestingArrays() throws Exception
