@@ -19,8 +19,12 @@ public class TestNetworks {
     public static void main(String[] args) throws Exception
     {
 //        sigmoidPerfomanceTest();
-//        addingListsPerfTest();
-        addingArraysPerfTest();
+        for (int i = 0; i < 10; i++) {
+            addingListsPerfTest();
+            Thread.sleep(1000);
+            addingArraysPerfTest();
+            Thread.sleep(1000);
+        }
 //        performanceTestingFFObjects();
 //        performanceTestingArrays();
     }
@@ -51,6 +55,7 @@ public class TestNetworks {
      */
     public static void addingListsPerfTest()
     {
+        System.out.println("Adding lists...");
         int count = 100000;
         List<Double> list1 = generateRandomList(count);
         List<Double> list2 = generateRandomList(count);
@@ -66,6 +71,7 @@ public class TestNetworks {
         System.out.format("Took %s milliseconds", formatter.format(duration));
         System.out.println();
         System.out.format("Rate: %s / sec", formatter.format(rate));
+        System.out.println();
     }
 
     /*
@@ -73,6 +79,7 @@ public class TestNetworks {
      */
     public static void addingArraysPerfTest()
     {
+        System.out.println("Adding arrays...");
         int count = 100000;
         double[] arr1 = generateRandomArray(count);
         double[] arr2 = generateRandomArray(count);
@@ -88,6 +95,7 @@ public class TestNetworks {
         System.out.format("Took %s milliseconds", formatter.format(duration));
         System.out.println();
         System.out.format("Rate: %s / sec", formatter.format(rate));
+        System.out.println();
     }
 
     private static List<Double> generateRandomList(int size)
