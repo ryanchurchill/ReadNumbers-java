@@ -6,6 +6,9 @@ import Network.*;
 import Performance.Globals;
 import Util.MyMathUtils;
 import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.math3.linear.MatrixUtils;
+import org.apache.commons.math3.linear.RealMatrix;
+import org.apache.commons.math3.linear.RealVector;
 //import com.google.common.collect.Lists;
 
 import java.text.DecimalFormat;
@@ -36,7 +39,47 @@ public class TestNetworks {
 //        for (int i = 0; i < 10; i++) {
 //            performanceTestingFFObjects();
 //        }
-        performanceTestingArrays();
+//        performanceTestingArrays();
+
+        matrixPerformanceTest();
+    }
+
+    public static void matrixPerformanceTest()
+    {
+        int count = 1000000;
+
+        RealMatrix matrix1 = initializeGaussianMatrix(count, 1);
+        RealVector v1 = matrix1.getColumnVector(0);
+        RealMatrix matrix2 = initializeGaussianMatrix(1, count);
+        RealVector v2 = matrix2.getRowVector(0);
+
+        long startTime = System.currentTimeMillis();
+
+        v1.dotProduct(v2);
+
+        long endTime = System.currentTimeMillis();
+        long duration = (endTime - startTime);
+        double rate = ((double) count / (double)duration) * 1000.0;
+        DecimalFormat formatter = new DecimalFormat("#,###");
+        System.out.format("Took %s milliseconds", formatter.format(duration));
+        System.out.println();
+        System.out.format("Rate: %s / sec", formatter.format(rate));
+    }
+
+    private static RealMatrix initializeGaussianMatrix(int rows, int columns)
+    {
+        // createRealMatrix takes an array that's the transpose of what i'd expect
+        // the first dimension is y, the second dimension is x
+
+        Random r = new Random();
+        double[][] nums = new double[rows][columns];
+        for (int y = 0; y < rows; y++) {
+            for (int x = 0; x < columns; x++) {
+                nums[y][x] = r.nextGaussian();
+            }
+        }
+
+        return MatrixUtils.createRealMatrix(nums);
     }
 
     public static void sigmoidPerfomanceTest()
