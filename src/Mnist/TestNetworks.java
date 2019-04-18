@@ -5,16 +5,21 @@ import Network.NetworkUtils.*;
 import Network.*;
 import Performance.Globals;
 import Util.MyMathUtils;
-import com.google.common.collect.Lists;
+import org.apache.commons.collections4.ListUtils;
+//import com.google.common.collect.Lists;
 
 import java.text.DecimalFormat;
 import java.util.*;
 
 public class TestNetworks {
 
-    static final String digitNetworkPath = "E:\\dev\\ai-az\\ReadNumbers-Java\\data\\wb_ryan_python.txt";
-    static final String simpleNetworkPath = "E:\\dev\\ai-az\\ReadNumbers-Java\\data\\sandbox_ryan_python.txt";
-    static final String oneExamplePath = "E:\\dev\\ai-az\\ReadNumbers-Java\\data\\python_after_one_example.txt";
+//    static final String digitNetworkPath = "E:\\dev\\ai-az\\ReadNumbers-Java\\data\\wb_ryan_python.txt";
+//    static final String simpleNetworkPath = "E:\\dev\\ai-az\\ReadNumbers-Java\\data\\sandbox_ryan_python.txt";
+//    static final String oneExamplePath = "E:\\dev\\ai-az\\ReadNumbers-Java\\data\\python_after_one_example.txt";
+
+    static final String digitNetworkPath = "/Users/rchurchill/udemy/NN-Book/ReadNumbers-java/data/wb_ryan_python.txt";
+    static final String simpleNetworkPath = "/Users/rchurchill/udemy/NN-Book/ReadNumbers-java/data/sandbox_ryan_python.txt";
+    static final String oneExamplePath = "/Users/rchurchill/udemy/NN-Book/ReadNumbers-java/data/python_after_one_example.txt";
 
     public static void main(String[] args) throws Exception
     {
@@ -28,10 +33,10 @@ public class TestNetworks {
 //            Thread.sleep(200);
 //        }
 
-        for (int i = 0; i < 10; i++) {
-            performanceTestingFFObjects();
-        }
-//        performanceTestingArrays();
+//        for (int i = 0; i < 10; i++) {
+//            performanceTestingFFObjects();
+//        }
+        performanceTestingArrays();
     }
 
     public static void sigmoidPerfomanceTest()
@@ -243,7 +248,7 @@ public class TestNetworks {
         System.out.println(n);
 
         List<Image> allTrainingImages = ReadMnist.getTrainingImages();
-        List<List<Image>> imageBatches = Lists.partition(allTrainingImages, 1);
+        List<List<Image>> imageBatches = ListUtils.partition(allTrainingImages, 1);
         ImageToNetwork.trainNetworkOnImageBatch(n, imageBatches.get(0));
 
         System.out.println(n);

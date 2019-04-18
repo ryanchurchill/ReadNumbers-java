@@ -1,7 +1,8 @@
 package Mnist;
 
 import Network.NetworkWithObjects;
-import com.google.common.collect.Lists;
+//import com.google.common.collect.Lists;
+import org.apache.commons.collections4.*;
 
 import java.text.DecimalFormat;
 import java.util.*;
@@ -38,7 +39,7 @@ public class TrainWithMnist {
         n.turnOn();
 
         List<Image> allTrainingImages = ReadMnist.getTrainingImages();
-        List<List<Image>> imageBatches = Lists.partition(allTrainingImages, miniBatchSize);
+        List<List<Image>> imageBatches = ListUtils.partition(allTrainingImages, miniBatchSize);
         // TEMP to speed things up
 //        imageBatches = imageBatches.subList(0, 1000);
 
