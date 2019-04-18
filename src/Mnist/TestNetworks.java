@@ -16,13 +16,13 @@ import java.util.*;
 
 public class TestNetworks {
 
-//    static final String digitNetworkPath = "E:\\dev\\ai-az\\ReadNumbers-Java\\data\\wb_ryan_python.txt";
-//    static final String simpleNetworkPath = "E:\\dev\\ai-az\\ReadNumbers-Java\\data\\sandbox_ryan_python.txt";
-//    static final String oneExamplePath = "E:\\dev\\ai-az\\ReadNumbers-Java\\data\\python_after_one_example.txt";
+    static final String digitNetworkPath = "E:\\dev\\ai-az\\ReadNumbers-Java\\data\\wb_ryan_python.txt";
+    static final String simpleNetworkPath = "E:\\dev\\ai-az\\ReadNumbers-Java\\data\\sandbox_ryan_python.txt";
+    static final String oneExamplePath = "E:\\dev\\ai-az\\ReadNumbers-Java\\data\\python_after_one_example.txt";
 
-    static final String digitNetworkPath = "/Users/rchurchill/udemy/NN-Book/ReadNumbers-java/data/wb_ryan_python.txt";
-    static final String simpleNetworkPath = "/Users/rchurchill/udemy/NN-Book/ReadNumbers-java/data/sandbox_ryan_python.txt";
-    static final String oneExamplePath = "/Users/rchurchill/udemy/NN-Book/ReadNumbers-java/data/python_after_one_example.txt";
+//    static final String digitNetworkPath = "/Users/rchurchill/udemy/NN-Book/ReadNumbers-java/data/wb_ryan_python.txt";
+//    static final String simpleNetworkPath = "/Users/rchurchill/udemy/NN-Book/ReadNumbers-java/data/sandbox_ryan_python.txt";
+//    static final String oneExamplePath = "/Users/rchurchill/udemy/NN-Book/ReadNumbers-java/data/python_after_one_example.txt";
 
     public static void main(String[] args) throws Exception
     {
@@ -39,23 +39,34 @@ public class TestNetworks {
 //        for (int i = 0; i < 10; i++) {
 //            performanceTestingFFObjects();
 //        }
-//        performanceTestingArrays();
+//        matrixPerformanceTest();
 
-        matrixPerformanceTest();
+
+        performanceTestingArrays();
     }
 
+    /*
+    single dot product of 1 million in 4 MS
+    250 million / sec
+
+    1,000 dot products of 1,000 in 5 MS
+    200,000 / sec
+     */
     public static void matrixPerformanceTest()
     {
-        int count = 1000000;
+        int count = 1000;
+        int size = 1000;
 
-        RealMatrix matrix1 = initializeGaussianMatrix(count, 1);
+        RealMatrix matrix1 = initializeGaussianMatrix(size, 1);
         RealVector v1 = matrix1.getColumnVector(0);
-        RealMatrix matrix2 = initializeGaussianMatrix(1, count);
+        RealMatrix matrix2 = initializeGaussianMatrix(1, size);
         RealVector v2 = matrix2.getRowVector(0);
 
         long startTime = System.currentTimeMillis();
 
-        v1.dotProduct(v2);
+        for (int i = 0; i < count; i++) {
+            v1.dotProduct(v2);
+        }
 
         long endTime = System.currentTimeMillis();
         long duration = (endTime - startTime);
@@ -240,6 +251,9 @@ public class TestNetworks {
         System.out.println();
     }
 
+    /*
+    12k/sec
+     */
     public static void performanceTestingArrays() throws Exception
     {
         System.out.println("Testing network with arrays...");
@@ -250,7 +264,7 @@ public class TestNetworks {
 
         List<Image> allTrainingImages = ReadMnist.getTrainingImages();
 
-        int count = 10000;
+        int count = allTrainingImages.size();
         long duration = timeBatchFeedForwardArrays(n, allTrainingImages.subList(0, count));
         double rate = ((double) count / (double)duration) * 1000.0;
         System.out.println("Avg rate: " + rate + " / sec");

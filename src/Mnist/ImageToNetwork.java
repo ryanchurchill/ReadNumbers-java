@@ -4,6 +4,7 @@ import Exceptions.ValidationException;
 import Network.Learning.TrainingExample;
 import Network.NetworkWithArrays;
 import Network.NetworkWithObjects;
+import org.apache.commons.math3.linear.RealVector;
 
 import java.util.*;
 
@@ -15,7 +16,9 @@ public class ImageToNetwork {
 
     public static void feedImageToNetworkWithArrays(NetworkWithArrays n, Image i) throws Exception
     {
-        n.feedForward(i.getPixelsForArrayNetwork());
+        RealVector rv1 = n.feedForward(i.getPixelsForArrayNetwork());
+        RealVector rv2 = n.feedForwardOld(i.getPixelsForArrayNetwork());
+        System.out.println("blah");
     }
 
     /**

@@ -21,8 +21,8 @@ public class NetworkWithArrays {
     // sizes.length - 1 -> desiredOutput layer
     List<Integer> sizes;
 
-    // matrix at index 0 are the biases at layer 1
-    List<RealMatrix> biases;
+    // vector at index 0 are the biases at layer 1
+    List<RealVector> biases;
 
     // matrix at index 0 is the weights from layer 0 to layer 1
     List<RealMatrix> weights;
@@ -35,12 +35,12 @@ public class NetworkWithArrays {
         initializeBiases();
         initializeWeights();
 
-        if (debugging) {
-            System.out.println("Biases:");
-            MyMathUtils.printRealMatrices(biases);
-            System.out.println("Weights:");
-            MyMathUtils.printRealMatrices(weights);
-        }
+//        if (debugging) {
+//            System.out.println("Biases:");
+//            MyMathUtils.printRealMatrices(biases);
+//            System.out.println("Weights:");
+//            MyMathUtils.printRealMatrices(weights);
+//        }
     }
 
     public int getNumLayers()
@@ -64,13 +64,24 @@ public class NetworkWithArrays {
         return MatrixUtils.createRealMatrix(nums);
     }
 
+    private RealVector initializeGaussianVector(int count)
+    {
+        Random r = new Random();
+        double[] nums = new double[count];
+        for (int i = 0; i < count; i++) {
+            nums[i] = r.nextGaussian();
+        }
+
+        return MatrixUtils.createRealVector(nums);
+    }
+
     private void initializeBiases()
     {
         biases = new ArrayList<>();
         for (int neuronLayer=1; neuronLayer<sizes.size(); neuronLayer++) {
             // row count is size of neuron layer
             // column count is 1
-            biases.add(initializeGaussianMatrix(sizes.get(neuronLayer), 1));
+            biases.add(initializeGaussianVector(sizes.get(neuronLayer)));
         }
     }
 
@@ -91,10 +102,10 @@ public class NetworkWithArrays {
      * @param input an (n, 1) matrix of the values going to the input layer
      * @return an (m, 1) matrix of the values coming out of the desiredOutput layer
      */
-    public RealVector feedForward(RealVector input)
+    public RealVector feedForwardOld(RealVector input)
     {
         for (int startingLayer = 0; startingLayer < getNumLayers() - 1; startingLayer ++) {
-            RealMatrix biasesAtNextLayer = biases.get(startingLayer);
+            RealVector biasesAtNextLayer = biases.get(startingLayer);
             RealMatrix weightsBetweenLayers = weights.get(startingLayer);
 
             int outputSize = sizes.get(startingLayer+1);
@@ -102,16 +113,49 @@ public class NetworkWithArrays {
             // index of neuron at the next layer
             for (int neuronIndex = 0; neuronIndex < outputSize; neuronIndex ++) {
                 double val = input.dotProduct(weightsBetweenLayers.getRowVector(neuronIndex));
-                val += biasesAtNextLayer.getEntry(neuronIndex, 0);
+                val += biasesAtNextLayer.getEntry(neuronIndex);
                 val = MyMathUtils.sigmoid(val);
                 outputArr[neuronIndex] = val;
             }
 
             input = MatrixUtils.createRealVector(outputArr);
-            if (debugging) {
-                System.out.println("Output at layer " + Integer.toString(startingLayer + 1) + ":");
-                System.out.println(input);
-            }
+//            if (debugging) {
+//                System.out.println("Output at layer " + Integer.toString(startingLayer + 1) + ":");
+//                System.out.println(input);
+//            }
+        }
+
+        return input;
+    }
+
+    /**
+     *
+     * @param input an (n, 1) matrix of the values going to the input layer
+     * @return an (m, 1) matrix of the values coming out of the desiredOutput layer
+     */
+    public RealVector feedForward(RealVector input)
+    {
+        for (int startingLayer = 0; startingLayer < getNumLayers() - 1; startingLayer ++) {
+            RealVector biasesAtNextLayer = biases.get(startingLayer);
+            RealMatrix weightsBetweenLayers = weights.get(startingLayer);
+
+            input = MyMathUtils.sigmoid(weightsBetweenLayers.operate(input).add(biasesAtNextLayer));
+
+//            int outputSize = sizes.get(startingLayer+1);
+//            double[] outputArr = new double[outputSize];
+//            // index of neuron at the next layer
+//            for (int neuronIndex = 0; neuronIndex < outputSize; neuronIndex ++) {
+//                double val = input.dotProduct(weightsBetweenLayers.getRowVector(neuronIndex));
+//                val += biasesAtNextLayer.getEntry(neuronIndex, 0);
+//                val = MyMathUtils.sigmoid(val);
+//                outputArr[neuronIndex] = val;
+//            }
+
+//            input = MatrixUtils.createRealVector(outputArr);
+//            if (debugging) {
+//                System.out.println("Output at layer " + Integer.toString(startingLayer + 1) + ":");
+//                System.out.println(input);
+//            }
         }
 
         return input;

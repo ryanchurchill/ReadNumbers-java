@@ -1,6 +1,7 @@
 package Util;
 
 import org.apache.commons.math3.linear.RealMatrix;
+import org.apache.commons.math3.linear.RealVector;
 
 import java.util.List;
 
@@ -33,6 +34,14 @@ public class MyMathUtils {
             }
         }
         return ret;
+    }
+
+    public static RealVector sigmoid(RealVector v)
+    {
+        for (int i = 0; i < v.getDimension(); i++) {
+            v.setEntry(i, sigmoid(v.getEntry(i)));
+        }
+        return v;
     }
 
     /**

@@ -7,11 +7,11 @@ import java.util.List;
 
 public class ReadMnist {
 
-//    static final String TRAINING_LABEL_FILE = "E:\\dev\\ai-az\\ReadNumbers-Java\\data\\train-labels-idx1-ubyte";
-//    static final String TRAINING_IMAGE_FILE = "E:\\dev\\ai-az\\ReadNumbers-Java\\data\\train-images-idx3-ubyte";
+    static final String TRAINING_LABEL_FILE = "E:\\dev\\ai-az\\ReadNumbers-Java\\data\\train-labels-idx1-ubyte";
+    static final String TRAINING_IMAGE_FILE = "E:\\dev\\ai-az\\ReadNumbers-Java\\data\\train-images-idx3-ubyte";
 
-    static final String TRAINING_LABEL_FILE = "/Users/rchurchill/udemy/NN-Book/ReadNumbers-java/data/train-labels-idx1-ubyte";
-    static final String TRAINING_IMAGE_FILE = "/Users/rchurchill/udemy/NN-Book/ReadNumbers-java/data/train-images-idx3-ubyte";
+//    static final String TRAINING_LABEL_FILE = "/Users/rchurchill/udemy/NN-Book/ReadNumbers-java/data/train-labels-idx1-ubyte";
+//    static final String TRAINING_IMAGE_FILE = "/Users/rchurchill/udemy/NN-Book/ReadNumbers-java/data/train-images-idx3-ubyte";
 
     static final int EXPECTED_TRAINING_COUNT = 60000;
 
