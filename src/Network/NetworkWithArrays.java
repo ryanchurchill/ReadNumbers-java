@@ -1,5 +1,7 @@
 package Network;
 
+import Exceptions.ValidationException;
+import Network.Learning.TrainingExample;
 import Util.MyMathUtils;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
@@ -20,6 +22,8 @@ public class NetworkWithArrays {
     // 0 -> input layer
     // sizes.length - 1 -> desiredOutput layer
     List<Integer> sizes;
+
+    // TODO: lists -> arrays
 
     // vector at index 0 are the biases at layer 1
     List<RealVector> biases;
@@ -102,63 +106,70 @@ public class NetworkWithArrays {
      * @param input an (n, 1) matrix of the values going to the input layer
      * @return an (m, 1) matrix of the values coming out of the desiredOutput layer
      */
-    public RealVector feedForwardOld(RealVector input)
-    {
-        for (int startingLayer = 0; startingLayer < getNumLayers() - 1; startingLayer ++) {
-            RealVector biasesAtNextLayer = biases.get(startingLayer);
-            RealMatrix weightsBetweenLayers = weights.get(startingLayer);
-
-            int outputSize = sizes.get(startingLayer+1);
-            double[] outputArr = new double[outputSize];
-            // index of neuron at the next layer
-            for (int neuronIndex = 0; neuronIndex < outputSize; neuronIndex ++) {
-                double val = input.dotProduct(weightsBetweenLayers.getRowVector(neuronIndex));
-                val += biasesAtNextLayer.getEntry(neuronIndex);
-                val = MyMathUtils.sigmoid(val);
-                outputArr[neuronIndex] = val;
-            }
-
-            input = MatrixUtils.createRealVector(outputArr);
-//            if (debugging) {
-//                System.out.println("Output at layer " + Integer.toString(startingLayer + 1) + ":");
-//                System.out.println(input);
-//            }
-        }
-
-        return input;
-    }
-
-    /**
-     *
-     * @param input an (n, 1) matrix of the values going to the input layer
-     * @return an (m, 1) matrix of the values coming out of the desiredOutput layer
-     */
     public RealVector feedForward(RealVector input)
     {
         for (int startingLayer = 0; startingLayer < getNumLayers() - 1; startingLayer ++) {
             RealVector biasesAtNextLayer = biases.get(startingLayer);
             RealMatrix weightsBetweenLayers = weights.get(startingLayer);
-
             input = MyMathUtils.sigmoid(weightsBetweenLayers.operate(input).add(biasesAtNextLayer));
-
-//            int outputSize = sizes.get(startingLayer+1);
-//            double[] outputArr = new double[outputSize];
-//            // index of neuron at the next layer
-//            for (int neuronIndex = 0; neuronIndex < outputSize; neuronIndex ++) {
-//                double val = input.dotProduct(weightsBetweenLayers.getRowVector(neuronIndex));
-//                val += biasesAtNextLayer.getEntry(neuronIndex, 0);
-//                val = MyMathUtils.sigmoid(val);
-//                outputArr[neuronIndex] = val;
-//            }
-
-//            input = MatrixUtils.createRealVector(outputArr);
-//            if (debugging) {
-//                System.out.println("Output at layer " + Integer.toString(startingLayer + 1) + ":");
-//                System.out.println(input);
-//            }
         }
 
         return input;
+    }
+
+    public void trainWithMiniBatch(List<TrainingExample> miniBatch) throws ValidationException
+    {
+        // zero out lists of matrices for deltas in weights and biases
+        RealVector[] biasNablas = new RealVector[biases.size()];
+        for (int i=0; i < biases.size(); i++) {
+            biasNablas[i] = MyMathUtils.zeroes(biases.get(0).getDimension());
+        }
+
+        RealMatrix[] weightNablas = new RealMatrix[weights.size()];
+        for (int i=0; i < weights.size(); i++) {
+            weightNablas[i] = MyMathUtils.zeroes(weights.get(0).getRowDimension(), weights.get(0).getColumnDimension());
+        }
+
+        // for each mini-batch, get values to alter nablas by
+    }
+
+    public void backpropSingleExample(TrainingExample te)
+    {
+        // TODO: codify in TE
+        RealVector input = MatrixUtils.createRealVector(te.input);
+        RealVector desiredOutput = MatrixUtils.createRealVector(te.desiredOutput);
+
+        /*
+         1. feed-forward to get Zs and Activations at each node
+          */
+
+        // activations begins at first layer
+        RealVector[] activations = new RealVector[weights.size() + 1];
+        activations[0] = input;
+        // zs begins at second layer (index 0 is second layer)
+        RealVector[] zs = new RealVector[weights.size()];
+
+        // though i is 0, we are starting at second layer, based on activations from prior layer
+        for (int i = 0; i < weights.size(); i++) {
+            RealVector biasesAtThisLayer = biases.get(i);
+            RealMatrix weightsToThisLayer = weights.get(i);
+            RealVector z = weightsToThisLayer.operate(activations[i]).add(biasesAtThisLayer);
+            // reminder: activations begins at first layer, zs begins at second layer
+            zs[i] = z;
+            activations[i+1] = MyMathUtils.sigmoid(z);
+        }
+
+        /*
+        2. calculate the error vector at the output layer
+        use BP1: (a - y) * (sigmoidPrime(z))
+         */
+        RealVector delta = activations[weights.size()].subtract(desiredOutput).ebeMultiply(MyMathUtils.sigmoidPrime(zs[weights.size() - 1]));
+
+        // error vector can set last layer of nablas
+
+        /*
+        3. backpropagate error and set nablas at prior layers
+         */
     }
 
     public static void main(String[] args) {

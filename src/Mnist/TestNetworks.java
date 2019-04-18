@@ -36,13 +36,14 @@ public class TestNetworks {
 //            Thread.sleep(200);
 //        }
 
-//        for (int i = 0; i < 10; i++) {
-//            performanceTestingFFObjects();
-//        }
+        for (int i = 0; i < 10; i++) {
+            performanceTestingFFObjects();
+            performanceTestingArrays();
+        }
 //        matrixPerformanceTest();
 
 
-        performanceTestingArrays();
+
     }
 
     /*
@@ -231,7 +232,7 @@ public class TestNetworks {
         Avg rate: 10,152.284263959391 / sec
          */
 
-        int count = 10000;
+        int count = allTrainingImages.size();
         long duration = timeBatchFeedForwardObjects(n, allTrainingImages.subList(0, count));
         double rate = ((double) count / (double)duration) * 1000.0;
         DecimalFormat formatter = new DecimalFormat("#,###");
@@ -239,16 +240,16 @@ public class TestNetworks {
         System.out.println();
         System.out.format("Avg rate: %s / sec", formatter.format(rate));
         System.out.println();
-        System.out.format("initializeTimer: %s", formatter.format(Globals.initializeTimer.getTimeInMs()));
-        System.out.println();
-        System.out.format("ffTimer: %s", formatter.format(Globals.ffTimer.getTimeInMs()));
-        System.out.println();
-        System.out.format("layerTimer: %s", formatter.format(Globals.layerTimer.getTimeInMs()));
-        System.out.println();
-        System.out.format("nodeTimer: %s", formatter.format(Globals.nodeTimer.getTimeInMs()));
-        System.out.println();
-        System.out.format("synapseTimer: %s", formatter.format(Globals.synapseTimer.getTimeInMs()));
-        System.out.println();
+//        System.out.format("initializeTimer: %s", formatter.format(Globals.initializeTimer.getTimeInMs()));
+//        System.out.println();
+//        System.out.format("ffTimer: %s", formatter.format(Globals.ffTimer.getTimeInMs()));
+//        System.out.println();
+//        System.out.format("layerTimer: %s", formatter.format(Globals.layerTimer.getTimeInMs()));
+//        System.out.println();
+//        System.out.format("nodeTimer: %s", formatter.format(Globals.nodeTimer.getTimeInMs()));
+//        System.out.println();
+//        System.out.format("synapseTimer: %s", formatter.format(Globals.synapseTimer.getTimeInMs()));
+//        System.out.println();
     }
 
     /*
@@ -266,8 +267,12 @@ public class TestNetworks {
 
         int count = allTrainingImages.size();
         long duration = timeBatchFeedForwardArrays(n, allTrainingImages.subList(0, count));
+        DecimalFormat formatter = new DecimalFormat("#,###");
         double rate = ((double) count / (double)duration) * 1000.0;
-        System.out.println("Avg rate: " + rate + " / sec");
+        System.out.format("Duration: %s milliseconds", formatter.format(duration));
+        System.out.println();
+        System.out.format("Avg rate: %s / sec", formatter.format(rate));
+        System.out.println();
     }
 
     public static long timeSingleFeedForward(NetworkWithObjects n, Image i) throws Exception

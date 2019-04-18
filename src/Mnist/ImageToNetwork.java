@@ -17,8 +17,8 @@ public class ImageToNetwork {
     public static void feedImageToNetworkWithArrays(NetworkWithArrays n, Image i) throws Exception
     {
         RealVector rv1 = n.feedForward(i.getPixelsForArrayNetwork());
-        RealVector rv2 = n.feedForwardOld(i.getPixelsForArrayNetwork());
-        System.out.println("blah");
+//        RealVector rv2 = n.feedForwardOld(i.getPixelsForArrayNetwork());
+//        System.out.println("blah");
     }
 
     /**

@@ -1,5 +1,6 @@
 package Util;
 
+import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
 
@@ -44,6 +45,32 @@ public class MyMathUtils {
         return v;
     }
 
+    public static RealVector sigmoidPrime(RealVector v)
+    {
+        for (int i = 0; i < v.getDimension(); i ++) {
+            v.setEntry(i, sigmoidPrime(v.getEntry(i)));
+        }
+        return v;
+    }
+
+    public static RealVector zeroes(int count)
+    {
+        double[] values = new double[count];
+        return MatrixUtils.createRealVector(values);
+    }
+
+    /**
+     * TODO: are rows and columns correct?
+     * @param rows
+     * @param columns
+     * @return
+     */
+    public static RealMatrix zeroes(int rows, int columns)
+    {
+        double[][] values = new double[rows][columns];
+        return MatrixUtils.createRealMatrix(values);
+    }
+
     /**
      * sigmoid: 2,327 milliseconds for 10 million, or 4,297,379 / sec
      * @param x
@@ -59,4 +86,8 @@ public class MyMathUtils {
         return sigmoid(x) * (1 - sigmoid(x));
     }
 
+    public static void main(String[] args) {
+        RealMatrix rm = zeroes(2, 5);
+        System.out.println(rm);
+    }
 }
