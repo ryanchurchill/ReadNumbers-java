@@ -318,41 +318,41 @@ public class TestNetworks {
 
     public static void testSimpleNetwork() throws Exception
     {
-        LoadNetworkFromFileNumpy loader = new LoadNetworkFromFileNumpy(simpleNetworkPath);
-        NetworkWithObjects simpleNetwork = loader.load();
-
-        // TE1: 1, 2 -> 0, 1
-        List<Double> input1 = new ArrayList<>();
-        input1.add(1.0);
-        input1.add(2.0);
-        List<Double> desiredOutput1 = new ArrayList<>();
-        desiredOutput1.add(0.0);
-        desiredOutput1.add(1.0);
-        TrainingExample te1 = new TrainingExample(input1, desiredOutput1);
-
-        // TE2: 2, 1 -> 1, 0
-        List<Double> input2 = new ArrayList<>();
-        input2.add(2.0);
-        input2.add(1.0);
-        List<Double> desiredOutput2 = new ArrayList<>();
-        desiredOutput2.add(1.0);
-        desiredOutput2.add(0.0);
-        TrainingExample te2 = new TrainingExample(input2, desiredOutput2);
-
-        System.out.println("Initial network:");
-        System.out.println(simpleNetwork);
-
-//        simpleNetwork.feedForwardRecursive(input2);
-//        simpleNetwork.calculateErrors(desiredOutput2);
-//        simpleNetwork.updateWeightsAndBiasesAfterSingleTrainingExample();
-
-        List<TrainingExample> miniBatch = new ArrayList<>();
-        miniBatch.add(te1);
-        miniBatch.add(te2);
-        simpleNetwork.trainWithMiniBatch(miniBatch);
-
-        System.out.println("Network after one mini-batch:");
-        System.out.println(simpleNetwork);
+//        LoadNetworkFromFileNumpy loader = new LoadNetworkFromFileNumpy(simpleNetworkPath);
+//        NetworkWithObjects simpleNetwork = loader.load();
+//
+//        // TE1: 1, 2 -> 0, 1
+//        List<Double> input1 = new ArrayList<>();
+//        input1.add(1.0);
+//        input1.add(2.0);
+//        List<Double> desiredOutput1 = new ArrayList<>();
+//        desiredOutput1.add(0.0);
+//        desiredOutput1.add(1.0);
+//        TrainingExample te1 = new TrainingExample(input1, desiredOutput1);
+//
+//        // TE2: 2, 1 -> 1, 0
+//        List<Double> input2 = new ArrayList<>();
+//        input2.add(2.0);
+//        input2.add(1.0);
+//        List<Double> desiredOutput2 = new ArrayList<>();
+//        desiredOutput2.add(1.0);
+//        desiredOutput2.add(0.0);
+//        TrainingExample te2 = new TrainingExample(input2, desiredOutput2);
+//
+//        System.out.println("Initial network:");
+//        System.out.println(simpleNetwork);
+//
+////        simpleNetwork.feedForwardRecursive(input2);
+////        simpleNetwork.calculateErrors(desiredOutput2);
+////        simpleNetwork.updateWeightsAndBiasesAfterSingleTrainingExample();
+//
+//        List<TrainingExample> miniBatch = new ArrayList<>();
+//        miniBatch.add(te1);
+//        miniBatch.add(te2);
+//        simpleNetwork.trainWithMiniBatch(miniBatch);
+//
+//        System.out.println("Network after one mini-batch:");
+//        System.out.println(simpleNetwork);
     }
 
     public static void testDigits(String[] args) throws Exception {

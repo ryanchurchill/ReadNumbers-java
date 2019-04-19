@@ -183,7 +183,7 @@ public class LoadNetworkFromFileNumpy {
     public static void main(String[] args) throws Exception
     {
 //        testParsing();
-//        String filePath = "E:\\dev\\ai-az\\ReadNumbers-Java\\data\\train-labels-idx1-ubyte";
+//        String filePath = "E:\\dev\\ai-az\\ReadNumbers-Java\\data\\trainWithObjects-labels-idx1-ubyte";
         String filePath = "E:\\dev\\ai-az\\ReadNumbers-Java\\data\\wb_ryan_python.txt";
         LoadNetworkFromFileNumpy loader = new LoadNetworkFromFileNumpy(filePath);
         NetworkWithObjects network = loader.load();

@@ -40,11 +40,17 @@ public class ImageToNetwork {
         return closestValueIndex;
     }
 
+    /**
+     * Doesn't do anything
+     * @param n
+     * @param miniBatch
+     * @throws ValidationException
+     */
     public static void trainNetworkOnImageBatch(NetworkWithObjects n, List<Image> miniBatch) throws ValidationException
     {
         List<TrainingExample> tes = new ArrayList<>();
         for (Image i : miniBatch) {
-            tes.add(new TrainingExample(i.getPixelsForNetwork(), determineExpectedOutputValuesForDigit(i.getActualDigit())));
+//            tes.add(new TrainingExample(i.getPixelsForNetwork(), determineExpectedOutputValuesForDigit(i.getActualDigit())));
         }
         n.trainWithMiniBatch(tes);
     }

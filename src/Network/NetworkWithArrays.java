@@ -131,9 +131,24 @@ public class NetworkWithArrays {
         }
 
         // for each mini-batch, get values to alter nablas by
+        for (TrainingExample te : miniBatch) {
+            RealVector[] biasNablasDelta = new RealVector[biases.size()];
+            RealMatrix[] weightNablasDelta = new RealMatrix[weights.size()];
+            backpropSingleExample(te, biasNablasDelta, weightNablasDelta);
+
+
+        }
+
+        // now edit weights and biases based on nablas
     }
 
-    public void backpropSingleExample(TrainingExample te)
+    /**
+     *
+     * @param te
+     * @param biasNablasOut how much to add to each bias
+     * @param weightNablasOut how much to add to each weight
+     */
+    public void backpropSingleExample(TrainingExample te, RealVector[] biasNablasOut, RealMatrix[] weightNablasOut)
     {
         // TODO: codify in TE
         RealVector input = MatrixUtils.createRealVector(te.input);
@@ -166,10 +181,17 @@ public class NetworkWithArrays {
         RealVector delta = activations[weights.size()].subtract(desiredOutput).ebeMultiply(MyMathUtils.sigmoidPrime(zs[weights.size() - 1]));
 
         // error vector can set last layer of nablas
+        biasNablasOut[biases.size() - 1] = delta;
+        weightNablasOut[weights.size() - 1] = MyMathUtils.multiplyVectors(delta, activations[weights.size()]);
 
         /*
         3. backpropagate error and set nablas at prior layers
          */
+        for (int i = weights.size() - 2; i >= 0; i--) {
+            delta = weights.get(i).transpose().operate(delta).ebeMultiply(MyMathUtils.sigmoidPrime(zs[i]));
+            biasNablasOut[i] = delta;
+            weightNablasOut[i] = MyMathUtils.multiplyVectors(delta, activations[i+1]);
+        }
     }
 
     public static void main(String[] args) {

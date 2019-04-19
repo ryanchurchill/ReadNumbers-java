@@ -300,6 +300,11 @@ public class NetworkWithObjects {
         }
     }
 
+    /**
+     * Doesn't do anything
+     * @param miniBatch
+     * @throws ValidationException
+     */
     public void trainWithMiniBatch(List<TrainingExample> miniBatch) throws ValidationException
     {
         assertOn();
@@ -307,9 +312,9 @@ public class NetworkWithObjects {
         int counter = 0;
         for (TrainingExample te : miniBatch) {
 //            feedForwardRecursive(te.input);
-            feedForwardIterative(te.input);
-            calculateErrors(te.desiredOutput);
-            updateAllNablas();
+//            feedForwardIterative(te.input);
+//            calculateErrors(te.desiredOutput);
+//            updateAllNablas();
 //            System.out.println("Processed example " + counter++);
         }
 

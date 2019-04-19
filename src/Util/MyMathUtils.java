@@ -60,6 +60,25 @@ public class MyMathUtils {
     }
 
     /**
+     * TODO: probably slow
+     * This isn't exactly accurate - it doesn't care what shape the vectors are in
+     * @param v1
+     * @param v2
+     * @return
+     */
+    public static RealMatrix multiplyVectors(RealVector v1, RealVector v2)
+    {
+        double[][] vals = new double[v1.getDimension()][v2.getDimension()];
+        for (int i = 0; i < v1.getDimension(); i++) {
+            for (int j = 0; j < v2.getDimension(); j++) {
+                vals[i][j] = v1.getEntry(i) * v2.getEntry(j);
+            }
+        }
+
+        return MatrixUtils.createRealMatrix(vals);
+    }
+
+    /**
      * TODO: are rows and columns correct?
      * @param rows
      * @param columns
@@ -86,8 +105,42 @@ public class MyMathUtils {
         return sigmoid(x) * (1 - sigmoid(x));
     }
 
+    public static RealVector[] addRealVectorArrays(RealVector[] vs1, RealVector[] vs2)
+    {
+        RealVector[] ret = new RealVector[vs1.length];
+
+        for (int i = 0; i < vs1.length; i++) {
+            ret[i] = vs1[i].add(vs2[i]);
+        }
+
+        return ret;
+    }
+
+
+    /*
+    TESTING
+     */
+
     public static void main(String[] args) {
-        RealMatrix rm = zeroes(2, 5);
-        System.out.println(rm);
+
+    }
+
+    public static void testAddVectorArrays()
+    {
+
+    }
+
+    public static void testMultiplyVectors()
+    {
+        double[] v1Data = new double[2];
+        v1Data[0] = 1;
+        v1Data[1] = 2;
+        double[] v2Data = new double[3];
+        v2Data[0] = 3;
+        v2Data[1] = 4;
+        v2Data[2] = 5;
+
+        RealMatrix m = multiplyVectors(MatrixUtils.createRealVector(v1Data), MatrixUtils.createRealVector(v2Data));
+        System.out.println(m);
     }
 }
