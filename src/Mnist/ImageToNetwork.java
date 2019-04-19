@@ -4,6 +4,7 @@ import Exceptions.ValidationException;
 import Network.Learning.TrainingExample;
 import Network.NetworkWithArrays;
 import Network.NetworkWithObjects;
+import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealVector;
 
 import java.util.*;
@@ -40,17 +41,31 @@ public class ImageToNetwork {
         return closestValueIndex;
     }
 
+    public static int determineResultFromVector(RealVector output)
+    {
+        double closestValue = Double.MIN_VALUE;
+        int closestValueIndex = -1;
+        double[] outputValues = output.toArray();
+        for (int i = 0; i < outputValues.length; i++) {
+            if (Math.abs(outputValues[i] - 1) < Math.abs(closestValue - 1)) {
+                closestValue = outputValues[i];
+                closestValueIndex = i;
+            }
+        }
+        return closestValueIndex;
+    }
+
     /**
      * Doesn't do anything
      * @param n
      * @param miniBatch
      * @throws ValidationException
      */
-    public static void trainNetworkOnImageBatch(NetworkWithObjects n, List<Image> miniBatch) throws ValidationException
+    public static void trainNetworkOnImageBatch(NetworkWithArrays n, List<Image> miniBatch) throws ValidationException
     {
         List<TrainingExample> tes = new ArrayList<>();
         for (Image i : miniBatch) {
-//            tes.add(new TrainingExample(i.getPixelsForNetwork(), determineExpectedOutputValuesForDigit(i.getActualDigit())));
+            tes.add(new TrainingExample(i.getPixelsForArrayNetwork(), MatrixUtils.createRealVector(determineExpectedOutputValuesForDigit(i.getActualDigit()))));
         }
         n.trainWithMiniBatch(tes);
     }
@@ -62,18 +77,18 @@ public class ImageToNetwork {
      * @return
      * @throws ValidationException
      */
-    public static List<Double> determineExpectedOutputValuesForDigit(int digit) throws ValidationException
+    public static double[] determineExpectedOutputValuesForDigit(int digit) throws ValidationException
     {
         if (digit < 0 || digit > 9) {
             throw new ValidationException("Digit not valid");
         }
 
-        ArrayList<Double> ret = new ArrayList<>();
+        double[] ret = new double[10];
         for (int i=0; i<10; i++) {
             if (i == digit) {
-                ret.add((double) 1);
+                ret[i] = 1;
             } else {
-                ret.add((double) 0);
+                ret[i] = 0;
             }
         }
 

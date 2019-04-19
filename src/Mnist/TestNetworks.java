@@ -303,18 +303,18 @@ public class TestNetworks {
         return (endTime - startTime);
     }
 
-    public static void testLightlyTrainedNetwork() throws Exception
-    {
-        LoadNetworkFromFileNumpy loader = new LoadNetworkFromFileNumpy(oneExamplePath);
-        NetworkWithObjects n = loader.load();
-        System.out.println(n);
-
-        List<Image> allTrainingImages = ReadMnist.getTrainingImages();
-        List<List<Image>> imageBatches = ListUtils.partition(allTrainingImages, 1);
-        ImageToNetwork.trainNetworkOnImageBatch(n, imageBatches.get(0));
-
-        System.out.println(n);
-    }
+//    public static void testLightlyTrainedNetwork() throws Exception
+//    {
+//        LoadNetworkFromFileNumpy loader = new LoadNetworkFromFileNumpy(oneExamplePath);
+//        NetworkWithObjects n = loader.load();
+//        System.out.println(n);
+//
+//        List<Image> allTrainingImages = ReadMnist.getTrainingImages();
+//        List<List<Image>> imageBatches = ListUtils.partition(allTrainingImages, 1);
+//        ImageToNetwork.trainNetworkOnImageBatch(n, imageBatches.get(0));
+//
+//        System.out.println(n);
+//    }
 
     public static void testSimpleNetwork() throws Exception
     {

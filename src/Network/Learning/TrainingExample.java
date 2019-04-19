@@ -1,12 +1,14 @@
 package Network.Learning;
 
+import org.apache.commons.math3.linear.RealVector;
+
 import java.util.List;
 
 public class TrainingExample {
-    public double[] input;
-    public double[] desiredOutput;
+    public RealVector input;
+    public RealVector desiredOutput;
 
-    public TrainingExample(double[] _input, double[] _desiredOutput)
+    public TrainingExample(RealVector _input, RealVector _desiredOutput)
     {
         input = _input;
         desiredOutput = _desiredOutput;

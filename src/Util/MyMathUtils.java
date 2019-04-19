@@ -116,18 +116,75 @@ public class MyMathUtils {
         return ret;
     }
 
+    public static RealMatrix[] addRealMatrixArrays(RealMatrix[] ms1, RealMatrix[] ms2)
+    {
+        RealMatrix[] ret = new RealMatrix[ms1.length];
+
+        for (int i = 0; i < ms1.length; i++) {
+            ret[i] = ms1[i].add(ms2[i]);
+        }
+
+        return ret;
+    }
+
+    public static void applyGradientDescentToBiases(RealVector[] biases, RealVector[] biasNablas, int learningRate, int batchSize)
+    {
+        for (int layerIndex = 0; layerIndex < biases.length; layerIndex++) {
+            RealVector biasesAtLayer = biases[layerIndex];
+            for (int biasIndex = 0; biasIndex < biasesAtLayer.getDimension(); biasIndex++) {
+                double bias = biasesAtLayer.getEntry(biasIndex);
+                double newBias =  bias - ((double)learningRate / (double)batchSize * biasNablas[layerIndex].getEntry(biasIndex));
+                biasesAtLayer.setEntry(biasIndex, newBias);
+            }
+        }
+    }
+
+    public static void applyGradientDescentToWeights(RealMatrix[] weights, RealMatrix[] weightNablas, int learningRate, int batchSize)
+    {
+        for (int layerIndex = 0; layerIndex < weightNablas.length; layerIndex++) {
+            RealMatrix weightsAtLayer = weights[layerIndex];
+            for (int i = 0; i < weightsAtLayer.getRowDimension(); i++) {
+                for (int j = 0; j < weightsAtLayer.getColumnDimension(); j++) {
+                    double weight = weightsAtLayer.getEntry(i, j);
+                    double newWeight = weight - ((double)learningRate / (double)batchSize * weightNablas[layerIndex].getEntry(i, j));
+                    weightsAtLayer.setEntry(i, j, newWeight);
+                }
+            }
+        }
+    }
 
     /*
     TESTING
      */
 
     public static void main(String[] args) {
-
+        testAddVectorArrays();
     }
 
     public static void testAddVectorArrays()
     {
+        RealVector[] vs1 = new RealVector[2];
+        RealVector[] vs2 = new RealVector[2];
+//        RealMatrix[] ms1 = new RealMatrix[2];
+//        RealMatrix[] ms2 = new RealMatrix[2];
 
+        double[] vals = new double[2];
+        vals[0] = 3;
+        vals[1] = 4;
+        vs1[0] = MatrixUtils.createRealVector(vals);
+        vals[0] = 5;
+        vals[1] = 6;
+        vs1[1] = MatrixUtils.createRealVector(vals);
+
+        vals[0] = 1;
+        vals[1] = 4;
+        vs2[0] = MatrixUtils.createRealVector(vals);
+        vals[0] = 2;
+        vals[1] = 3;
+        vs2[1] = MatrixUtils.createRealVector(vals);
+
+        RealVector[] response = addRealVectorArrays(vs1, vs2);
+        System.out.println(response);
     }
 
     public static void testMultiplyVectors()
