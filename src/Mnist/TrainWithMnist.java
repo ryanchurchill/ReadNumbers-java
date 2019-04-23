@@ -4,6 +4,7 @@ import Network.NetworkWithArrays;
 import Network.NetworkWithObjects;
 //import com.google.common.collect.Lists;
 import org.apache.commons.collections4.*;
+import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealVector;
 
 import java.text.DecimalFormat;
@@ -33,10 +34,27 @@ public class TrainWithMnist {
 
     public void trainWithBoth() throws Exception
     {
+        List<Image> allTrainingImages = ReadMnist.getTrainingImages();
+        List<Image> testImages = allTrainingImages.subList(0, 1000);
+
         System.out.println("Training With Objects");
-        trainWithObjects(1);
+//        trainWithObjects(1);
+
+        ArrayList<Integer> sizes = new ArrayList<>();
+        sizes.add(784); sizes.add(30); sizes.add(10);
+
+        // need to build both networks at the same time so training of one doesn't affect the other
+        no = NetworkWithObjects.initializeNetworkRandom(sizes);
+        na = new NetworkWithArrays(no);
+
+        System.out.println("Epoch -1");
+        outputBatchTestObjects(testImages);
+
         System.out.println("Training with Arrays");
-        trainWithArrays(1);
+//        trainWithArrays(1);
+
+
+        outputBatchTestArray(testImages);
     }
 
     public void trainWithArrays(int epochs) throws Exception
