@@ -8,6 +8,9 @@ import Network.Learning.TrainingExample;
 import Network.NetworkObjects.*;
 import Performance.Globals;
 import Util.MyMathUtils;
+import org.apache.commons.math3.linear.MatrixUtils;
+import org.apache.commons.math3.linear.RealMatrix;
+import org.apache.commons.math3.linear.RealVector;
 
 /**
  * General rule: we initialize the network from left to right.
@@ -350,7 +353,55 @@ public class NetworkWithObjects {
         }
     }
 
+    /*
+    CONVERSION
+     */
 
+    public List<Integer> getSizes()
+    {
+        List<Integer> sizes = new ArrayList<Integer>();
+        for (Layer l : layers) {
+            sizes.add(l.nodeCount());
+        }
+        return sizes;
+    }
+
+    public RealVector[] getBiasVectors()
+    {
+        List<RealVector> list = new ArrayList<>();
+        for (int layerIndex = 1; layerIndex < layers.size(); layerIndex++) {
+            Layer l = layers.get(layerIndex);
+            double[] biases = new double[l.nodes.size()];
+            for (int i = 0; i < l.nodes.size(); i++) {
+                biases[i] = l.nodes.get(i).bias;
+            }
+            list.add(MatrixUtils.createRealVector(biases));
+        }
+        RealVector[] ret = new RealVector[list.size()];
+        return list.toArray(ret);
+    }
+
+    public RealMatrix[] getWeightMatrices()
+    {
+        List<RealMatrix> list = new ArrayList<>();
+
+        for (int layerIndex = 1; layerIndex < layers.size(); layerIndex++) {
+            Layer l = layers.get(layerIndex);
+            Layer priorLayer = layers.get(layerIndex-1);
+            double[][] data = new double[l.nodes.size()][priorLayer.nodes.size()];
+            for (int thisLayerNodeIndex = 0; thisLayerNodeIndex < l.nodes.size(); thisLayerNodeIndex++) {
+                Node thisNode = l.nodes.get(thisLayerNodeIndex);
+                for (int priorLayerNodeIndex = 0; priorLayerNodeIndex < priorLayer.nodes.size(); priorLayerNodeIndex++) {
+                    Synapse s = thisNode.synapsesFromPriorLayer.get(priorLayerNodeIndex);
+                    data[thisLayerNodeIndex][priorLayerNodeIndex] = s.weight;
+                }
+            }
+            list.add(MatrixUtils.createRealMatrix(data));
+        }
+
+        RealMatrix[] ret = new RealMatrix[list.size()];
+        return list.toArray(ret);
+    }
 
     /**
      * synapsesFromPriorLayer are set as we build up the network. Once that's done, this method can be called

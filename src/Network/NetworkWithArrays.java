@@ -23,8 +23,6 @@ public class NetworkWithArrays {
     // sizes.length - 1 -> desiredOutput layer
     List<Integer> sizes;
 
-    // TODO: lists -> arrays
-
     int learningRate = 3;
 
     // vector at index 0 are the biases at layer 1
@@ -47,6 +45,17 @@ public class NetworkWithArrays {
 //            System.out.println("Weights:");
 //            MyMathUtils.printRealMatrices(weights);
 //        }
+    }
+
+    /**
+     * Converts from NetworkWithObjects
+     * @param no
+     */
+    public NetworkWithArrays(NetworkWithObjects no)
+    {
+        sizes = no.getSizes();
+        biases = no.getBiasVectors();
+        weights = no.getWeightMatrices();
     }
 
     public int getNumLayers()
