@@ -4,6 +4,7 @@ import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MyMathUtils {
@@ -151,6 +152,16 @@ public class MyMathUtils {
                 }
             }
         }
+    }
+
+    public static List<Double> rvToList(RealVector rv)
+    {
+        List<Double> ret = new ArrayList<Double>();
+        double[] arr = rv.toArray();
+        for (int i=0; i < arr.length; i++) {
+            ret.add(arr[i]);
+        }
+        return ret;
     }
 
     /*

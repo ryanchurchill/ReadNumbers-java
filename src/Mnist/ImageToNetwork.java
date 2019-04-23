@@ -18,7 +18,7 @@ public class ImageToNetwork {
     public static void feedImageToNetworkWithArrays(NetworkWithArrays n, Image i) throws Exception
     {
         RealVector rv1 = n.feedForward(i.getPixelsForArrayNetwork());
-//        RealVector rv2 = n.feedForwardOld(i.getPixelsForArrayNetwork());
+//        RealVector rv2 = na.feedForwardOld(i.getPixelsForArrayNetwork());
 //        System.out.println("blah");
     }
 
@@ -61,7 +61,16 @@ public class ImageToNetwork {
      * @param miniBatch
      * @throws ValidationException
      */
-    public static void trainNetworkOnImageBatch(NetworkWithArrays n, List<Image> miniBatch) throws ValidationException
+    public static void trainNetworkOnImageBatchArray(NetworkWithArrays n, List<Image> miniBatch) throws ValidationException
+    {
+        List<TrainingExample> tes = new ArrayList<>();
+        for (Image i : miniBatch) {
+            tes.add(new TrainingExample(i.getPixelsForArrayNetwork(), MatrixUtils.createRealVector(determineExpectedOutputValuesForDigit(i.getActualDigit()))));
+        }
+        n.trainWithMiniBatch(tes);
+    }
+
+    public static void trainNetworkOnImageBatch(NetworkWithObjects n, List<Image> miniBatch) throws ValidationException
     {
         List<TrainingExample> tes = new ArrayList<>();
         for (Image i : miniBatch) {

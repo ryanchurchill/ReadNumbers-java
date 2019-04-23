@@ -14,7 +14,6 @@ import Util.MyMathUtils;
  */
 public class NetworkWithObjects {
     List<Layer> layers;
-    State state = State.SETUP;
 
     public double learningRate = 3;
 
@@ -92,7 +91,7 @@ public class NetworkWithObjects {
         Layer outputLayer = getOutputLayer();
         double[] ret = new double[outputLayer.nodeCount()];
         for (int i = 0; i < outputLayer.nodeCount(); i++) {
-            ret[i] = outputLayer.nodeArray[i].currentValue;
+            ret[i] = outputLayer.nodes.get(i).currentValue;
         }
         return ret;
     }
@@ -100,15 +99,6 @@ public class NetworkWithObjects {
     public int getLayerCount()
     {
         return layers.size();
-    }
-
-    public void turnOn()
-    {
-        for (Layer l : layers) {
-            l.getReadyToProcess();
-        }
-
-        state = State.ON;
     }
 
     /**
@@ -125,7 +115,7 @@ public class NetworkWithObjects {
         // skip clearing first layer since it will be initialized with new data
         for (int i = 1; i < getLayerCount(); i++) {
             Layer l = layers.get(i);
-            for (Node n : l.nodeArray) {
+            for (Node n : l.nodes) {
                 n.currentValue = null;
             }
         }
@@ -138,7 +128,6 @@ public class NetworkWithObjects {
     }
 
     public void feedForwardIterative(List<Double> input) throws ValidationException {
-        assertOn();
         if (layers.isEmpty()) {
             throw new ValidationException("cannot feed forward empty network");
         }
@@ -152,10 +141,10 @@ public class NetworkWithObjects {
         for (int i = 1; i < getLayerCount(); i++) {
 //            Globals.layerTimer.start();
             Layer l = layers.get(i);
-            for (Node n : l.nodeArray) {
+            for (Node n : l.nodes) {
 //                Globals.nodeTimer.start();
                 double val = 0;
-                for (Synapse s : n.synapsesFromPriorLayerArray) {
+                for (Synapse s : n.synapsesFromPriorLayer) {
 //                    Globals.synapseTimer.start();
                     val += s.nodeInPriorLayer.currentValue * s.weight;
 //                    Globals.synapseTimer.stop();
@@ -179,9 +168,9 @@ public class NetworkWithObjects {
 //
 //        for (int i = 1; i < getLayerCount(); i++) {
 //            Layer l = layers.get(i);
-//            l.nodeList.parallelStream().forEach(n -> {
+//            l.nodes.parallelStream().forEach(n -> {
 //                double val = 0;
-//                for (Synapse s : n.synapsesFromPriorLayerList) {
+//                for (Synapse s : n.synapsesFromPriorLayer) {
 //                    val += s.nodeInPriorLayer.currentValue * s.weight;
 //                }
 //                n.weightedInput = val;
@@ -206,7 +195,7 @@ public class NetworkWithObjects {
 //        for (int i = 1; i < getLayerCount(); i++) {
 //            Layer l = layers.get(i);
 //            ExecutorService service = Executors.newFixedThreadPool(50);
-//            for (Node n : l.nodeList) {
+//            for (Node n : l.nodes) {
 //                service.execute(new FeedForwardNodeTask(n));
 //            }
 //            // this will get blocked until all task finish
@@ -230,7 +219,7 @@ public class NetworkWithObjects {
 //        public void run()
 //        {
 //            double val = 0;
-//            for (Synapse s : n.synapsesFromPriorLayerList) {
+//            for (Synapse s : n.synapsesFromPriorLayer) {
 //                val += s.nodeInPriorLayer.currentValue * s.weight;
 //            }
 //            n.weightedInput = val;
@@ -241,7 +230,7 @@ public class NetworkWithObjects {
 //    private void clearAllValues()
 //    {
 //        for (Layer l : layers) {
-//            for (Node n : l.nodeList) {
+//            for (Node n : l.nodes) {
 //                n.currentValue = null;
 //            }
 //        }
@@ -257,7 +246,7 @@ public class NetworkWithObjects {
         // calculate the error at the desiredOutput layer
         Layer outputLayer = getOutputLayer();
         int nodeIndex = 0;
-        for (Node n : outputLayer.nodeArray) {
+        for (Node n : outputLayer.nodes) {
             n.setErrorForOutputNode(desiredOutput.get(nodeIndex));
             nodeIndex++;
         }
@@ -265,7 +254,7 @@ public class NetworkWithObjects {
         // propogate error back to the remaining layers
         for (int layerIndex = getLayerCount() - 2; layerIndex >= 0; layerIndex--) {
             Layer currentLayer = layers.get(layerIndex);
-            for (Node n : currentLayer.nodeArray) {
+            for (Node n : currentLayer.nodes) {
                 n.setErrorForNonOutputNode();
             }
         }
@@ -280,23 +269,16 @@ public class NetworkWithObjects {
     {
         for (Layer l : layers)
         {
-            for (Node n : l.nodeArray) {
+            for (Node n : l.nodes) {
                 // nableBias == error
                 if (!(n.bias == null)) {
                     n.bias = (n.bias - (learningRate * n.error));
                 }
-                for (Synapse s : n.synapsesToNextLayerArray) {
+                for (Synapse s : n.synapsesToNextLayer) {
                     double nablaWeight = s.nodeInPriorLayer.currentValue * s.nodeInNextLayer.error;
                     s.weight = (s.weight - (learningRate * nablaWeight));
                 }
             }
-        }
-    }
-
-    public void assertOn() throws ValidationException
-    {
-        if (state != State.ON) {
-            throw new ValidationException("Neural Network must be on!");
         }
     }
 
@@ -307,14 +289,13 @@ public class NetworkWithObjects {
      */
     public void trainWithMiniBatch(List<TrainingExample> miniBatch) throws ValidationException
     {
-        assertOn();
 //        resetAllNablas();
-        int counter = 0;
+//        int counter = 0;
         for (TrainingExample te : miniBatch) {
 //            feedForwardRecursive(te.input);
-//            feedForwardIterative(te.input);
-//            calculateErrors(te.desiredOutput);
-//            updateAllNablas();
+            feedForwardIterative(te.getInputAsList());
+            calculateErrors(te.getDisiredOutputAsList());
+            updateAllNablas();
 //            System.out.println("Processed example " + counter++);
         }
 
@@ -329,9 +310,9 @@ public class NetworkWithObjects {
 //    {
 //        for (Layer l : layers)
 //        {
-//            for (Node n : l.nodeList) {
+//            for (Node n : l.nodes) {
 //                n.biasNablaForMiniBatch = 0;
-//                for (Synapse s : n.synapsesToNextLayerList) {
+//                for (Synapse s : n.synapsesToNextLayer) {
 //                    s.weightNablaForMiniBatch = 0;
 //                }
 //            }
@@ -345,9 +326,9 @@ public class NetworkWithObjects {
     {
         for (Layer l : layers)
         {
-            for (Node n : l.nodeArray) {
+            for (Node n : l.nodes) {
                 n.updateBiasNablaForMiniBatch();
-                for (Synapse s : n.synapsesToNextLayerArray) {
+                for (Synapse s : n.synapsesToNextLayer) {
                     s.updateWeightNablaForMiniBatch();
                 }
             }
@@ -358,20 +339,22 @@ public class NetworkWithObjects {
     {
         for (Layer l : layers)
         {
-            for (Node n : l.nodeArray) {
+            for (Node n : l.nodes) {
                 if (l.layerNum > 0) {
                     n.updateBiasFromNabla(learningRate, miniBatchSize);
                 }
-                for (Synapse s : n.synapsesToNextLayerArray) {
+                for (Synapse s : n.synapsesToNextLayer) {
                     s.updateWeightFromNabla(learningRate, miniBatchSize);
                 }
             }
         }
     }
 
+
+
     /**
-     * synapsesFromPriorLayerList are set as we build up the network. Once that's done, this method can be called
-     * to populate synapsesToNextLayerList
+     * synapsesFromPriorLayer are set as we build up the network. Once that's done, this method can be called
+     * to populate synapsesToNextLayer
      */
 //    public void setSynapsesToNextLayer()
 //    {
@@ -403,6 +386,5 @@ public class NetworkWithObjects {
         input.add(.3); input.add(.7);
         n.feedForwardRecursive(input);
         System.out.println(n);
-
     }
 }

@@ -1,6 +1,5 @@
 package Mnist;
 
-import Network.Learning.TrainingExample;
 import Network.NetworkWithArrays;
 import Network.NetworkWithObjects;
 //import com.google.common.collect.Lists;
@@ -21,12 +20,14 @@ Performance 4/15/19
  */
 
 public class TrainWithMnist {
-    NetworkWithArrays n;
+    NetworkWithArrays na;
+    NetworkWithObjects no;
 
     public static void main(String[] args) throws Exception
     {
         TrainWithMnist twn = new TrainWithMnist();
-        twn.trainWithArrays();
+//        twn.trainWithArrays();
+        twn.trainWithObjects();
     }
 
     public void trainWithArrays() throws Exception
@@ -38,7 +39,7 @@ public class TrainWithMnist {
 
         ArrayList<Integer> sizes = new ArrayList<>();
         sizes.add(784); sizes.add(30); sizes.add(10);
-        n = new NetworkWithArrays(sizes);
+        na = new NetworkWithArrays(sizes);
 
         List<Image> allTrainingImages = ReadMnist.getTrainingImages();
         List<List<Image>> imageBatches = ListUtils.partition(allTrainingImages, miniBatchSize);
@@ -48,7 +49,7 @@ public class TrainWithMnist {
         List<Image> testImages = allTrainingImages.subList(0, 10000);
 
         System.out.println("Epoch -1");
-        outputBatchTest(testImages);
+        outputBatchTestArray(testImages);
 
         for (int epochCounter = 0; epochCounter < epochs; epochCounter++) {
             // TODO: randomize training image order
@@ -56,7 +57,7 @@ public class TrainWithMnist {
             long startTime = System.currentTimeMillis();
             int batchCounter = 0;
             for (List<Image> miniBatch : imageBatches) {
-                ImageToNetwork.trainNetworkOnImageBatch(n, miniBatch);
+                ImageToNetwork.trainNetworkOnImageBatchArray(na, miniBatch);
 //                printWithTimestamp("Completed batch " + batchCounter);
                 batchCounter++;
             }
@@ -68,75 +69,92 @@ public class TrainWithMnist {
             System.out.println();
 
 
-            outputBatchTest(testImages);
+            outputBatchTestArray(testImages);
         }
     }
 
-//    public void trainWithObjects() throws Exception
-//    {
-//        // "params"
-//        int miniBatchSize = 10;
-//        int epochs = 10;
-////        int learningRate = 3; // hard-coded in nn
-//
-//        ArrayList<Integer> sizes = new ArrayList<>();
-//        sizes.add(784); sizes.add(30); sizes.add(10);
-//        n = NetworkWithObjects.initializeNetworkRandom(sizes);
-//        n.turnOn();
-//
-//        List<Image> allTrainingImages = ReadMnist.getTrainingImages();
-//        List<List<Image>> imageBatches = ListUtils.partition(allTrainingImages, miniBatchSize);
-//        // TEMP to speed things up
-////        imageBatches = imageBatches.subList(0, 1000);
-//
-//        List<Image> testImages = allTrainingImages.subList(0, 10000);
-//
-//        System.out.println("Epoch -1");
-//        outputBatchTest(testImages);
-//
-//        for (int epochCounter = 0; epochCounter < epochs; epochCounter++) {
-//            // TODO: randomize training image order
-//            System.out.println("Starting Epoch " + epochCounter);
-//            long startTime = System.currentTimeMillis();
-//            int batchCounter = 0;
-//            for (List<Image> miniBatch : imageBatches) {
-//                ImageToNetwork.trainNetworkOnImageBatch(n, miniBatch);
-////                printWithTimestamp("Completed batch " + batchCounter);
-//                batchCounter++;
-//            }
-//            long endTime = System.currentTimeMillis();
-//            long duration = endTime - startTime;
-////            System.out.println("Completed Epoch " + epochCounter + " in " + duration + " ms");
-//            DecimalFormat formatter = new DecimalFormat("#,###");
-//            System.out.format("Completed Epoch %d in %s milliseconds", epochCounter, formatter.format(duration));
-//            System.out.println();
-//
-//
-//            outputBatchTest(testImages);
-//        }
-//    }
+    public void trainWithObjects() throws Exception
+    {
+        // "params"
+        int miniBatchSize = 10;
+        int epochs = 10;
+//        int learningRate = 3; // hard-coded in nn
+
+        ArrayList<Integer> sizes = new ArrayList<>();
+        sizes.add(784); sizes.add(30); sizes.add(10);
+        no = NetworkWithObjects.initializeNetworkRandom(sizes);
+
+        List<Image> allTrainingImages = ReadMnist.getTrainingImages();
+        List<List<Image>> imageBatches = ListUtils.partition(allTrainingImages, miniBatchSize);
+        // TEMP to speed things up
+//        imageBatches = imageBatches.subList(0, 1000);
+
+        List<Image> testImages = allTrainingImages.subList(0, 10000);
+
+        System.out.println("Epoch -1");
+        outputBatchTestObjects(testImages);
+
+        for (int epochCounter = 0; epochCounter < epochs; epochCounter++) {
+            // TODO: randomize training image order
+            System.out.println("Starting Epoch " + epochCounter);
+            long startTime = System.currentTimeMillis();
+            int batchCounter = 0;
+            for (List<Image> miniBatch : imageBatches) {
+                ImageToNetwork.trainNetworkOnImageBatch(no, miniBatch);
+//                printWithTimestamp("Completed batch " + batchCounter);
+                batchCounter++;
+            }
+            long endTime = System.currentTimeMillis();
+            long duration = endTime - startTime;
+//            System.out.println("Completed Epoch " + epochCounter + " in " + duration + " ms");
+            DecimalFormat formatter = new DecimalFormat("#,###");
+            System.out.format("Completed Epoch %d in %s milliseconds", epochCounter, formatter.format(duration));
+            System.out.println();
+
+            outputBatchTestObjects(testImages);
+        }
+    }
 
     private void printWithTimestamp(String s)
     {
         System.out.println(Calendar.getInstance().getTime() + ": " + s);
     }
 
-    private void outputBatchTest(List<Image> images) throws Exception
+    private void outputBatchTestArray(List<Image> images) throws Exception
     {
         int numCorrect = 0;
         for (Image i : images) {
-            if (testImage(i)) {
+            if (testImageArray(i)) {
                 numCorrect++;
             }
         }
         System.out.println(numCorrect + " / " + images.size());
     }
 
-    private boolean testImage(Image i) throws Exception
+    private void outputBatchTestObjects(List<Image> images) throws Exception
     {
-        RealVector output = n.feedForward(i.getPixelsForArrayNetwork());
+        int numCorrect = 0;
+        for (Image i : images) {
+            if (testImageObjects(i)) {
+                numCorrect++;
+            }
+        }
+        System.out.println(numCorrect + " / " + images.size());
+    }
+
+    private boolean testImageArray(Image i) throws Exception
+    {
+        RealVector output = na.feedForward(i.getPixelsForArrayNetwork());
         int actualValue = i.getActualDigit();
         int networkValue = ImageToNetwork.determineResultFromVector(output);
+        return (actualValue == networkValue);
+    }
+
+    private boolean testImageObjects(Image i) throws Exception
+    {
+        no.feedForwardIterative(i.getPixelsForNetwork());
+        int actualValue = i.getActualDigit();
+        int networkValue = ImageToNetwork.determineResultFromNetwork(no);
         return (actualValue == networkValue);
     }
 }

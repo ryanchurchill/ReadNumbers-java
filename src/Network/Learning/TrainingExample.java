@@ -1,8 +1,9 @@
 package Network.Learning;
 
+import Util.MyMathUtils;
 import org.apache.commons.math3.linear.RealVector;
 
-import java.util.List;
+import java.util.*;
 
 public class TrainingExample {
     public RealVector input;
@@ -12,5 +13,15 @@ public class TrainingExample {
     {
         input = _input;
         desiredOutput = _desiredOutput;
+    }
+
+    public List<Double> getInputAsList()
+    {
+        return MyMathUtils.rvToList(input);
+    }
+
+    public List<Double> getDisiredOutputAsList()
+    {
+        return MyMathUtils.rvToList(desiredOutput);
     }
 }

@@ -6,8 +6,7 @@ import java.util.*;
 
 public class Layer {
     public int layerNum;
-    public List<Node> nodeList;
-    public Node[] nodeArray;
+    public List<Node> nodes;
 
     /*
     CONSTRUCTORS AND FACTORIES
@@ -15,7 +14,7 @@ public class Layer {
 
     private Layer(int _layerNum) {
         layerNum = _layerNum;
-        nodeList = new ArrayList<>();
+        nodes = new ArrayList<>();
     }
 
     public static Layer initializeLayerRandom(int nodeCount, int layerNum, Layer priorLayer) throws ValidationException {
@@ -30,7 +29,7 @@ public class Layer {
 
         for (int i = 0; i < nodeCount; i++) {
             Node n = Node.initializeNodeRandom(priorLayer);
-            layer.nodeList.add(n);
+            layer.nodes.add(n);
         }
         return layer;
     }
@@ -45,7 +44,7 @@ public class Layer {
 
         for (int i = 0; i < nodeCount; i++) {
             Node n = new Node();
-            layer.nodeList.add(n);
+            layer.nodes.add(n);
         }
         return layer;
     }
@@ -88,9 +87,9 @@ public class Layer {
             Node n = new Node(bias);
             for (int nodeIndexPriorLayer = 0; nodeIndexPriorLayer < priorLayer.nodeCount(); nodeIndexPriorLayer++) {
                 double weight = weightsFromPriorLayer.get(nodeIndexThisLayer).get(nodeIndexPriorLayer);
-                new Synapse(weight, priorLayer.nodeList.get(nodeIndexPriorLayer), n);
+                new Synapse(weight, priorLayer.nodes.get(nodeIndexPriorLayer), n);
             }
-            layer.nodeList.add(n);
+            layer.nodes.add(n);
 
         }
 
@@ -100,17 +99,6 @@ public class Layer {
     /*
     OTHER
      */
-
-    public void getReadyToProcess()
-    {
-        nodeArray = new Node[nodeList.size()];
-        nodeArray = nodeList.toArray(nodeArray);
-        nodeList.clear(); // to sanity check we aren't still using the list
-
-        for (Node n : nodeArray) {
-            n.getReadyToProcess();
-        }
-    }
 
     /**
      * First layer only - start of feeding data through the network
@@ -122,13 +110,13 @@ public class Layer {
         if (!isInputLayer()) {
             throw new ValidationException("layerNum must be 0 to initialize with input data");
         }
-        if (input.size() != nodeArray.length) {
+        if (input.size() != nodes.size()) {
             throw new ValidationException("input size does not match layer size");
         }
 
         // initialize
         for (int i = 0; i < input.size(); i++) {
-            nodeArray[i].currentValue = input.get(i);
+            nodes.get(i).currentValue = input.get(i);
         }
     }
 
@@ -143,7 +131,7 @@ public class Layer {
      */
     public void feedForward() throws ValidationException
     {
-        for (Node node : nodeArray) {
+        for (Node node : nodes) {
             node.feedForward();
         }
     }
@@ -151,7 +139,7 @@ public class Layer {
     public int nodeCount()
     {
         // temporary hack to get around list/array discrepancy
-        return Math.max(nodeList.size(), nodeArray.length);
+        return Math.max(nodes.size(), nodes.size());
     }
 
     /*
@@ -162,7 +150,7 @@ public class Layer {
     {
         StringBuilder sb = new StringBuilder();
         sb.append("Layer: " + layerNum + " Count: " + nodeCount() + System.lineSeparator());
-        for (Node n : nodeList) {
+        for (Node n : nodes) {
             sb.append(n.toString() + System.lineSeparator());
         }
 

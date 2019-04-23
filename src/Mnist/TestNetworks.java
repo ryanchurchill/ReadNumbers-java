@@ -1,11 +1,8 @@
 package Mnist;
 
-import Network.Learning.TrainingExample;
 import Network.NetworkUtils.*;
 import Network.*;
-import Performance.Globals;
 import Util.MyMathUtils;
-import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
@@ -217,13 +214,12 @@ public class TestNetworks {
         ArrayList<Integer> sizes = new ArrayList<>();
         sizes.add(784); sizes.add(30); sizes.add(10);
         NetworkWithObjects n = NetworkWithObjects.initializeNetworkRandom(sizes);
-        n.turnOn();
 
         List<Image> allTrainingImages = ReadMnist.getTrainingImages();
 
 //        for (int i = 0; i < 10; i++) {
 //            Image img = allTrainingImages.get(i);
-//            long duration = timeSingleFeedForward(n, img);
+//            long duration = timeSingleFeedForward(na, img);
 //            System.out.println(duration);
 //        }
 
@@ -305,20 +301,20 @@ public class TestNetworks {
 
 //    public static void testLightlyTrainedNetwork() throws Exception
 //    {
-//        LoadNetworkFromFileNumpy loader = new LoadNetworkFromFileNumpy(oneExamplePath);
-//        NetworkWithObjects n = loader.load();
-//        System.out.println(n);
+//        LoadNetworkFromFile loader = new LoadNetworkFromFile(oneExamplePath);
+//        NetworkWithObjects na = loader.load();
+//        System.out.println(na);
 //
 //        List<Image> allTrainingImages = ReadMnist.getTrainingImages();
 //        List<List<Image>> imageBatches = ListUtils.partition(allTrainingImages, 1);
-//        ImageToNetwork.trainNetworkOnImageBatch(n, imageBatches.get(0));
+//        ImageToNetwork.trainNetworkOnImageBatchArray(na, imageBatches.get(0));
 //
-//        System.out.println(n);
+//        System.out.println(na);
 //    }
 
     public static void testSimpleNetwork() throws Exception
     {
-//        LoadNetworkFromFileNumpy loader = new LoadNetworkFromFileNumpy(simpleNetworkPath);
+//        LoadNetworkFromFile loader = new LoadNetworkFromFile(simpleNetworkPath);
 //        NetworkWithObjects simpleNetwork = loader.load();
 //
 //        // TE1: 1, 2 -> 0, 1
@@ -357,7 +353,7 @@ public class TestNetworks {
 
     public static void testDigits(String[] args) throws Exception {
         List<Image> trainingImages = ReadMnist.getTrainingImages();
-        LoadNetworkFromFileNumpy loader = new LoadNetworkFromFileNumpy(digitNetworkPath);
+        LoadNetworkFromFile loader = new LoadNetworkFromFile(digitNetworkPath);
         NetworkWithObjects oldNetwork = loader.load();
 
 //        List<Integer> sizes = new ArrayList<>();

@@ -7,11 +7,8 @@ import Util.MyMathUtils;
 
 public class Node {
     // structural / permanent
-    public List<Synapse> synapsesFromPriorLayerList;
-    public List<Synapse> synapsesToNextLayerList;
-    // for performance
-    public Synapse[] synapsesFromPriorLayerArray;
-    public Synapse[] synapsesToNextLayerArray;
+    public List<Synapse> synapsesFromPriorLayer;
+    public List<Synapse> synapsesToNextLayer;
 
     // changes slowly, and only when learning
     public Double bias;
@@ -28,8 +25,8 @@ public class Node {
 
     public Node()
     {
-        synapsesFromPriorLayerList = new ArrayList<>();
-        synapsesToNextLayerList = new ArrayList<>();
+        synapsesFromPriorLayer = new ArrayList<>();
+        synapsesToNextLayer = new ArrayList<>();
     }
 
     public Node(double _bias)
@@ -47,7 +44,7 @@ public class Node {
         if (priorLayer != null) {
             Random r = new Random();
             n.bias = r.nextGaussian();
-            for (Node priorLayerNode : priorLayer.nodeList) {
+            for (Node priorLayerNode : priorLayer.nodes) {
                 Synapse.initializeSynapseRandom(priorLayerNode, n);
             }
         }
@@ -59,29 +56,18 @@ public class Node {
     OTHER
      */
 
-    public void getReadyToProcess()
-    {
-        synapsesToNextLayerArray = new Synapse[synapsesToNextLayerList.size()];
-        synapsesToNextLayerArray = synapsesToNextLayerList.toArray(synapsesToNextLayerArray);
-        synapsesToNextLayerList.clear(); // sanity check that we stop using the list
-
-        synapsesFromPriorLayerArray = new Synapse[synapsesFromPriorLayerList.size()];
-        synapsesFromPriorLayerArray = synapsesFromPriorLayerList.toArray(synapsesFromPriorLayerArray);
-        synapsesFromPriorLayerList.clear(); // sanity check that we stop using the list
-    }
-
     /**
      * Deprecated
-     * sets currentValue and returns it based on the nodeList in the prior layer
+     * sets currentValue and returns it based on the nodes in the prior layer
      * @return
      */
     public double feedForward() throws ValidationException
     {
-        if (currentValue == null && !(synapsesFromPriorLayerArray.length == 0)) {
+        if (currentValue == null && !(synapsesFromPriorLayer.size() == 0)) {
             double newVal = 0;
 
-            // sum weighted values from all nodeList in prior layer
-            for (Synapse synapse : synapsesFromPriorLayerArray) {
+            // sum weighted values from all nodes in prior layer
+            for (Synapse synapse : synapsesFromPriorLayer) {
                 newVal += synapse.nodeInPriorLayer.feedForward() * synapse.weight;
             }
             // add bias
@@ -101,7 +87,7 @@ public class Node {
 
     public void setErrorForOutputNode(double expectedValue) throws ValidationException
     {
-        if (!(synapsesToNextLayerArray.length == 0)) {
+        if (!(synapsesToNextLayer.size() == 0)) {
             throw new ValidationException("method must be called on desiredOutput node!");
         }
         // for desiredOutput layer, use BP1: (a - y) * (sigmoidPrime(z))
@@ -111,15 +97,15 @@ public class Node {
 
     public void setErrorForNonOutputNode() throws ValidationException
     {
-        if (synapsesToNextLayerArray.length == 0) {
+        if (synapsesToNextLayer.size() == 0) {
             throw new ValidationException("method must not be called on desiredOutput node!");
         }
 
         // for other layers, use BP2 to feed error back from next layer
         double newError = 0;
 
-        // sum weighted errors from all nodeList in next layer
-        for (Synapse synapse : synapsesToNextLayerArray) {
+        // sum weighted errors from all nodes in next layer
+        for (Synapse synapse : synapsesToNextLayer) {
             newError += synapse.nodeInNextLayer.error * synapse.weight;
         }
         // multiply by sigmoid prime of this node's Z
@@ -155,16 +141,16 @@ public class Node {
         sb.append("value: " + currentValue);
         sb.append(" z : " + weightedInput);
         sb.append(" error: " + error);
-        if (!synapsesFromPriorLayerList.isEmpty()) {
+        if (!synapsesFromPriorLayer.isEmpty()) {
 
             sb.append(" bias: " + bias);
             sb.append(" synapses to prior layer: ");
-            for (Synapse synapse : synapsesFromPriorLayerList) {
+            for (Synapse synapse : synapsesFromPriorLayer) {
                 sb.append(synapse.toString() + ", ");
             }
         }
         sb.append(" synapses to next layer: ");
-        for (Synapse synapse : synapsesToNextLayerList) {
+        for (Synapse synapse : synapsesToNextLayer) {
             sb.append(synapse.toString() + ", ");
         }
         return sb.substring(0, sb.length() - 2);
