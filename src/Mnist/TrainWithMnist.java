@@ -33,8 +33,7 @@ public class TrainWithMnist {
 
     public void trainWithBoth() throws Exception
     {
-//        System.out.println("Training With Objects");
-//        trainWithObjects(1);
+        int miniBatchSize = 10;
 
         ArrayList<Integer> sizes = new ArrayList<>();
         sizes.add(784); sizes.add(30); sizes.add(10);
@@ -46,16 +45,44 @@ public class TrainWithMnist {
         System.out.println("Loading images...");
         List<Image> allTrainingImages = ReadMnist.getTrainingImages();
         List<Image> testImages = allTrainingImages.subList(0, 1000);
+        List<List<Image>> imageBatches = ListUtils.partition(allTrainingImages, miniBatchSize);
 
         System.out.println("Testing...");
         System.out.println("Epoch -1");
         outputBatchTestObjects(testImages);
-
-//        System.out.println("Training with Arrays");
-//        trainWithArrays(1);
-
-
         outputBatchTestArray(testImages);
+
+        int epochs = 5;
+        System.out.println("Training...");
+        for (int epochCounter = 0; epochCounter < epochs; epochCounter++) {
+            System.out.println("Starting Epoch " + epochCounter);
+
+            System.out.println("Objects...");
+            long startTime = System.currentTimeMillis();
+            for (List<Image> miniBatch : imageBatches) {
+                ImageToNetwork.trainNetworkOnImageBatch(no, miniBatch);
+            }
+            long endTime = System.currentTimeMillis();
+            long duration = endTime - startTime;
+            DecimalFormat formatter = new DecimalFormat("#,###");
+            System.out.format("Completed Epoch %d in %s milliseconds", epochCounter, formatter.format(duration));
+            System.out.println();
+
+            outputBatchTestObjects(testImages);
+
+
+            System.out.println("Arrays...");
+            startTime = System.currentTimeMillis();
+            for (List<Image> miniBatch : imageBatches) {
+                ImageToNetwork.trainNetworkOnImageBatchArray(na, miniBatch);
+            }
+            endTime = System.currentTimeMillis();
+            duration = endTime - startTime;
+            System.out.format("Completed Epoch %d in %s milliseconds", epochCounter, formatter.format(duration));
+            System.out.println();
+
+            outputBatchTestArray(testImages);
+        }
     }
 
     public void trainWithArrays(int epochs) throws Exception
@@ -79,25 +106,25 @@ public class TrainWithMnist {
         System.out.println("Epoch -1");
         outputBatchTestArray(testImages);
 
-//        for (int epochCounter = 0; epochCounter < epochs; epochCounter++) {
-//            // TODO: randomize training image order
-//            System.out.println("Starting Epoch " + epochCounter);
-//            long startTime = System.currentTimeMillis();
-//            int batchCounter = 0;
-//            for (List<Image> miniBatch : imageBatches) {
-//                ImageToNetwork.trainNetworkOnImageBatchArray(na, miniBatch);
-////                printWithTimestamp("Completed batch " + batchCounter);
-//                batchCounter++;
-//            }
-//            long endTime = System.currentTimeMillis();
-//            long duration = endTime - startTime;
-////            System.out.println("Completed Epoch " + epochCounter + " in " + duration + " ms");
-//            DecimalFormat formatter = new DecimalFormat("#,###");
-//            System.out.format("Completed Epoch %d in %s milliseconds", epochCounter, formatter.format(duration));
-//            System.out.println();
-//
-//            outputBatchTestArray(testImages);
-//        }
+        for (int epochCounter = 0; epochCounter < epochs; epochCounter++) {
+            // TODO: randomize training image order
+            System.out.println("Starting Epoch " + epochCounter);
+            long startTime = System.currentTimeMillis();
+            int batchCounter = 0;
+            for (List<Image> miniBatch : imageBatches) {
+                ImageToNetwork.trainNetworkOnImageBatchArray(na, miniBatch);
+//                printWithTimestamp("Completed batch " + batchCounter);
+                batchCounter++;
+            }
+            long endTime = System.currentTimeMillis();
+            long duration = endTime - startTime;
+//            System.out.println("Completed Epoch " + epochCounter + " in " + duration + " ms");
+            DecimalFormat formatter = new DecimalFormat("#,###");
+            System.out.format("Completed Epoch %d in %s milliseconds", epochCounter, formatter.format(duration));
+            System.out.println();
+
+            outputBatchTestArray(testImages);
+        }
     }
 
     public void trainWithObjects(int epochs) throws Exception

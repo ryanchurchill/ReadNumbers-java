@@ -27,6 +27,11 @@ public class MyMathUtils {
         }
     }
 
+    /**
+     * Copies the matrix
+     * @param m
+     * @return
+     */
     public static RealMatrix sigmoid(RealMatrix m)
     {
         RealMatrix ret = m.copy();
@@ -38,16 +43,28 @@ public class MyMathUtils {
         return ret;
     }
 
+    /**
+     * Copies the vector
+     * @param v
+     * @return
+     */
     public static RealVector sigmoid(RealVector v)
     {
+        v = v.copy();
         for (int i = 0; i < v.getDimension(); i++) {
             v.setEntry(i, sigmoid(v.getEntry(i)));
         }
         return v;
     }
 
+    /**
+     * Copies the vector
+     * @param v
+     * @return
+     */
     public static RealVector sigmoidPrime(RealVector v)
     {
+        v = v.copy();
         for (int i = 0; i < v.getDimension(); i ++) {
             v.setEntry(i, sigmoidPrime(v.getEntry(i)));
         }
@@ -176,9 +193,27 @@ public class MyMathUtils {
     /*
     TESTING
      */
-
     public static void main(String[] args) {
-        testAddVectorArrays();
+        testingReference();
+    }
+
+    public static void testingReference()
+    {
+        double[] myData = new double[1];
+        myData[0] = 5;
+        RealVector myRv = MatrixUtils.createRealVector(myData);
+        System.out.println(myRv);
+
+        double[] myData2 = new double[1];
+        myData2[0] = 3;
+        RealVector myRv2 = MatrixUtils.createRealVector(myData2);
+        myRv.subtract(myRv2);
+        System.out.println(myRv);
+        System.out.println(myRv2);
+
+        myRv.ebeMultiply(myRv2);
+        System.out.println(myRv);
+        System.out.println(myRv2);
     }
 
     public static void testAddVectorArrays()

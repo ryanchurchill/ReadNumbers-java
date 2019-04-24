@@ -1,5 +1,6 @@
 package Mnist;
 
+import Network.Learning.TrainingExample;
 import Network.NetworkUtils.*;
 import Network.*;
 import Util.MyMathUtils;
@@ -57,6 +58,20 @@ public class TestNetworks {
         List<Double> input = new ArrayList<>();
         input.add(.5);
         input.add(.8);
+
+        List<Double> desiredOutput = new ArrayList<>();
+        desiredOutput.add(.3);
+
+//        no.feedForward(input);
+//        RealVector matrixResponse = na.feedForward(MyMathUtils.listToRv(input));
+
+        TrainingExample te = new TrainingExample(
+                MyMathUtils.listToRv(input), MyMathUtils.listToRv(desiredOutput));
+        List<TrainingExample> miniBatch = new ArrayList<>();
+        miniBatch.add(te);
+
+        no.trainWithMiniBatch(miniBatch);
+        na.trainWithMiniBatch(miniBatch);
 
         no.feedForward(input);
         RealVector matrixResponse = na.feedForward(MyMathUtils.listToRv(input));

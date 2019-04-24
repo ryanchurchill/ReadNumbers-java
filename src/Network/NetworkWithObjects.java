@@ -151,7 +151,7 @@ public class NetworkWithObjects {
                     val += s.nodeInPriorLayer.currentValue * s.weight;
 //                    Globals.synapseTimer.stop();
                 }
-                val -= n.bias;
+                val += n.bias;
                 n.weightedInput = val;
                 n.currentValue = MyMathUtils.sigmoid(val);
 //                Globals.nodeTimer.stop();
