@@ -113,7 +113,7 @@ public class NetworkWithArrays {
     }
 
     /**
-     *
+     * TODO: remove duplicate logic between here and SGD
      * @param input an (n, 1) matrix of the values going to the input layer
      * @return an (m, 1) matrix of the values coming out of the desiredOutput layer
      */
@@ -184,7 +184,6 @@ public class NetworkWithArrays {
             // reminder: activations begins at first layer, zs begins at second layer
             zs[i] = z;
             activations[i+1] = MyMathUtils.sigmoid(z);
-            System.out.println("blah");
         }
 
         /*
@@ -192,8 +191,6 @@ public class NetworkWithArrays {
         use BP1: (a - y) * (sigmoidPrime(z))
          */
         RealVector delta = activations[weights.length].subtract(te.desiredOutput).ebeMultiply(MyMathUtils.sigmoidPrime(zs[weights.length - 1]));
-        System.out.println("Array delta at final layer: ");
-        System.out.println(delta);
 
         // error vector can set last layer of nablas
         biasNablasOut[biases.length - 1] = delta;
