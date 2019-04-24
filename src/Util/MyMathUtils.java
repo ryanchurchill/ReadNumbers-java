@@ -164,6 +164,15 @@ public class MyMathUtils {
         return ret;
     }
 
+    public static RealVector listToRv(List<Double> list)
+    {
+        double[] arr = new double[list.size()];
+        for (int i=0; i<list.size(); i++) {
+            arr[i] = list.get(i);
+        }
+        return MatrixUtils.createRealVector(arr);
+    }
+
     /*
     TESTING
      */

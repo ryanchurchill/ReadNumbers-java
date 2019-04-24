@@ -33,14 +33,33 @@ public class TestNetworks {
 //            Thread.sleep(200);
 //        }
 
-        for (int i = 0; i < 10; i++) {
-            performanceTestingFFObjects();
-            performanceTestingArrays();
-        }
+//        for (int i = 0; i < 10; i++) {
+//            performanceTestingFFObjects();
+//            performanceTestingArrays();
+//        }
 //        matrixPerformanceTest();
 
+        testObjectsAndArrays();
 
+    }
 
+    public static void testObjectsAndArrays() throws Exception
+    {
+        ArrayList<Integer> sizes = new ArrayList<>();
+        sizes.add(2);
+//        sizes.add(3);
+        sizes.add(1);
+
+        // need to build both networks at the same time so training of one doesn't affect the other
+        NetworkWithObjects no = NetworkWithObjects.initializeNetworkRandom(sizes);
+        NetworkWithArrays na = new NetworkWithArrays(no);
+
+        List<Double> input = new ArrayList<>();
+        input.add(.5);
+        input.add(.8);
+
+        no.feedForward(input);
+        RealVector matrixResponse = na.feedForward(MyMathUtils.listToRv(input));
     }
 
     /*

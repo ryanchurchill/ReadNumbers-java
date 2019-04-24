@@ -122,7 +122,10 @@ public class NetworkWithArrays {
         for (int startingLayer = 0; startingLayer < getNumLayers() - 1; startingLayer ++) {
             RealVector biasesAtNextLayer = biases[startingLayer];
             RealMatrix weightsBetweenLayers = weights[startingLayer];
-            input = MyMathUtils.sigmoid(weightsBetweenLayers.operate(input).add(biasesAtNextLayer));
+            input = MyMathUtils.sigmoid(
+                    weightsBetweenLayers.operate(input)
+                    .subtract(biasesAtNextLayer)
+            );
         }
 
         return input;

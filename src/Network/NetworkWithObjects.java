@@ -6,7 +6,6 @@ import java.util.List;
 import Exceptions.ValidationException;
 import Network.Learning.TrainingExample;
 import Network.NetworkObjects.*;
-import Performance.Globals;
 import Util.MyMathUtils;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
@@ -109,28 +108,28 @@ public class NetworkWithObjects {
      * @param input
      * @throws ValidationException
      */
-    public void feedForwardRecursive(List<Double> input) throws ValidationException
-    {
-        if (layers.isEmpty()) {
-            throw new ValidationException("cannot feed forward empty network");
-        }
+//    public void feedForwardRecursive(List<Double> input) throws ValidationException
+//    {
+//        if (layers.isEmpty()) {
+//            throw new ValidationException("cannot feed forward empty network");
+//        }
+//
+//        // skip clearing first layer since it will be initialized with new data
+//        for (int i = 1; i < getLayerCount(); i++) {
+//            Layer l = layers.get(i);
+//            for (Node n : l.nodes) {
+//                n.currentValue = null;
+//            }
+//        }
+//
+//        // initialize neurons in first layer with input
+//        getInputLayer().setNodeValuesWithInputData(input);
+//
+//        // call recursive method on desiredOutput layer
+//        getOutputLayer().feedForward();
+//    }
 
-        // skip clearing first layer since it will be initialized with new data
-        for (int i = 1; i < getLayerCount(); i++) {
-            Layer l = layers.get(i);
-            for (Node n : l.nodes) {
-                n.currentValue = null;
-            }
-        }
-
-        // initialize neurons in first layer with input
-        getInputLayer().setNodeValuesWithInputData(input);
-
-        // call recursive method on desiredOutput layer
-        getOutputLayer().feedForward();
-    }
-
-    public void feedForwardIterative(List<Double> input) throws ValidationException {
+    public void feedForward(List<Double> input) throws ValidationException {
         if (layers.isEmpty()) {
             throw new ValidationException("cannot feed forward empty network");
         }
@@ -152,6 +151,7 @@ public class NetworkWithObjects {
                     val += s.nodeInPriorLayer.currentValue * s.weight;
 //                    Globals.synapseTimer.stop();
                 }
+                val -= n.bias;
                 n.weightedInput = val;
                 n.currentValue = MyMathUtils.sigmoid(val);
 //                Globals.nodeTimer.stop();
@@ -296,7 +296,7 @@ public class NetworkWithObjects {
 //        int counter = 0;
         for (TrainingExample te : miniBatch) {
 //            feedForwardRecursive(te.input);
-            feedForwardIterative(te.getInputAsList());
+            feedForward(te.getInputAsList());
             calculateErrors(te.getDisiredOutputAsList());
             updateAllNablas();
 //            System.out.println("Processed example " + counter++);
@@ -435,7 +435,7 @@ public class NetworkWithObjects {
 
         ArrayList<Double> input = new ArrayList<>();
         input.add(.3); input.add(.7);
-        n.feedForwardRecursive(input);
-        System.out.println(n);
+//        n.feedForwardRecursive(input);
+//        System.out.println(n);
     }
 }
